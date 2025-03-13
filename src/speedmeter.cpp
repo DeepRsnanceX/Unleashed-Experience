@@ -42,7 +42,7 @@ class $modify(PlayerObject){
 class $modify(PlayLayer) {
     struct Fields {
         std::unordered_map<int, bool> progressLogged;
-        float meterOffDelay = 3.2f;
+        float meterOffDelay = 3.23f;
     };
 
     bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
@@ -479,7 +479,7 @@ class $modify(PlayLayer) {
                 // run the visuals according to player speeds, 0.5x to 4x
                 if (playerSpeed == 0.7f || playerSpeed == 0.9f){
                     // 0.5x & 1x speed, show only 1 counter
-                    fields->meterOffDelay = 2.33f;
+                    // fields->meterOffDelay = 2.33f;
 
                     meterCounterGlow3->runAction(scaleGlowAnim1);
                     meterCounterGlow3->runAction(fadeOutGlow1);
@@ -489,7 +489,7 @@ class $modify(PlayLayer) {
 
                 } else if (playerSpeed == 1.1f) {
                     // 2x speed, show only 2 counters
-                    fields->meterOffDelay = 2.63f;
+                    // fields->meterOffDelay = 2.63f;
 
                     meterCounterGlow3->runAction(scaleGlowAnim1);
                     meterCounterGlow3->runAction(fadeOutGlow1);
@@ -504,7 +504,7 @@ class $modify(PlayLayer) {
 
                 } else if (playerSpeed == 1.3f) {
                     // 3x speed, show only 3 counters
-                    fields->meterOffDelay = 2.93f;
+                    // fields->meterOffDelay = 2.93f;
 
                     meterCounterGlow3->runAction(scaleGlowAnim1);
                     meterCounterGlow3->runAction(fadeOutGlow1);
@@ -524,7 +524,7 @@ class $modify(PlayLayer) {
 
                 } else if (playerSpeed == 1.6f) {
                     // 4x speed, show all 4 counters
-                    fields->meterOffDelay = 3.23f;
+                    // fields->meterOffDelay = 3.23f;
 
                     meterCounterGlow3->runAction(scaleGlowAnim1);
                     meterCounterGlow3->runAction(fadeOutGlow1);

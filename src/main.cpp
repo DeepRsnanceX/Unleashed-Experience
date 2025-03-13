@@ -19,10 +19,64 @@ int genRandomInt(int min, int max) {
 }
 
 class $modify(PlayerObject){
+    void startDashing(DashRingObject* p0) {
+        PlayerObject::startDashing(p0);
+
+        auto fmod = FMODAudioEngine::sharedEngine();
+
+        int randomBoost = genRandomInt(1, 7);
+        auto sfxToPlayBoost = fmt::format("boost_{}.ogg"_spr, randomBoost);
+
+        // Generate another random int to decide whether to play the sound
+        int playSound = genRandomInt(1, 10);
+
+        if (playSound > 7) {
+            fmod->playEffect(sfxToPlayBoost);
+        }
+
+    }
+
     void incrementJumps() {
         PlayerObject::incrementJumps();
+
+        auto fmod = FMODAudioEngine::sharedEngine();
+        bool m_isCube = !m_isShip && !m_isBird && !m_isBall && !m_isDart && !m_isRobot && !m_isSpider && !m_isSwing;
+
+        // Check for unleashedSounds and play a random jump sound
+        int randomJump = genRandomInt(1, 5);
+        auto sfxToPlayRandomJump = fmt::format("jump_{}.ogg"_spr, randomJump);
+
+        // Generate another random int to decide whether to play the sound
+        int playSound = genRandomInt(1, 10);
+
+        if (playSound > 5) {
+            if (m_isRobot || m_isCube && !m_ringJumpRelated && PlayLayer::get()) {
+                fmod->playEffect(sfxToPlayRandomJump);
+            }
+        }
+
     }
-}
+
+    void updateTimeMod(float p0, bool p1) {
+        
+        PlayerObject::updateTimeMod(p0, p1);
+
+        if (PlayLayer::get()) {
+            auto fmod = FMODAudioEngine::sharedEngine();
+            int randomBoost = genRandomInt(1, 7);
+            auto sfxToPlayBoost = fmt::format("boost_{}.ogg"_spr, randomBoost);
+
+            int doPlaySound = genRandomInt(1, 10);
+
+            if (p0 >= 1.5f) {
+                fmod->playEffect("boost_fullsfx.ogg"_spr);
+                if (doPlaySound >= 3) {
+                    fmod->playEffect(sfxToPlayBoost);
+                }
+            }
+        }
+    }
+};
 
 class $modify(PlayLayer) {
     bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
@@ -39,10 +93,8 @@ class $modify(PlayLayer) {
     void startGame() {
         PlayLayer::startGame();
 
-        if (unleashedSounds) {
-            auto fmod = FMODAudioEngine::sharedEngine();
-            fmod->playEffect("go.ogg"_spr);
-        }
+        auto fmod = FMODAudioEngine::sharedEngine();
+        fmod->playEffect("go.ogg"_spr);
     }
 
     void levelComplete() {

@@ -7,6 +7,9 @@
 		"ios": "2.2074"
 	},
 	"resources": {
+		"sprites": [
+			"resources/*.png"
+		],
 		"spritesheets": {
 			"UnleashedSheet": [
 				"resources/unleashed/*.png"
