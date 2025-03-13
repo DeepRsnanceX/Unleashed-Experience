@@ -1,23 +1,19 @@
-# UnleashedExperience
-This is where she makes a mod.
+<img src="resources/modHeader.png" width="150" alt="Sonic Unleashed Logo" />
 
-<img src="logo.png" width="150" alt="the mod's logo" />
+# The Unleashed Experience
 
-*Update logo.png to change your mod's icon (please)*
+In light of Sonic Unleashed (the best Sonic game to ever bless our existence) receiving a native port to PC in the form of a Recompilation, this mod aims to bring various gameplay aspects from Sonic Unleashed to Geometry Dash.
+Why? Because ***I LOVE SONIC UNLEASHED GRAAAHHHH***
 
-## Getting started
-We recommend heading over to [the getting started section on our docs](https://docs.geode-sdk.org/getting-started/) for useful info on what to do next.
+This mod is better enjoyed when paired with the Sonic Robot mod, using Modern SFX and Modern/Unleashed (Java) sprites. Get the mod for the best experience!!
 
-## Build instructions
-For more info, see [our docs](https://docs.geode-sdk.org/getting-started/create-mod#build)
-```sh
-# Assuming you have the Geode CLI set up already
-geode build
-```
+## Features
 
-# Resources
-* [Geode SDK Documentation](https://docs.geode-sdk.org/)
-* [Geode SDK Source Code](https://github.com/geode-sdk/geode/)
-* [Geode CLI](https://github.com/geode-sdk/cli)
-* [Bindings](https://github.com/geode-sdk/bindings/)
-* [Dev Tools](https://github.com/geode-sdk/DevTools)
+This mod brings the following features from Sonic Unleashed:
+
+- Various Sound Effects (such as Jump, Boost, and other voice lines.)
+- Ranking System (Ranks S-E granted to the player on level completion.)
+- Ranking Voicelines (Reactions Sonic has to your Rank in the original game.)
+- Speed Meter (A meter that shows you your current speed at certain percentages, based on the one that shows every checkpoint in the original game.)
+- "Title Card" (The text that shows up when starting a level.)
+- Sonic Unleashed HUD
