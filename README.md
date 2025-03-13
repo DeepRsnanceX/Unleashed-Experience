@@ -1,4 +1,4 @@
-<img src="resources/modHeader.png" width="150" alt="Sonic Unleashed Logo" />
+<img src="resources/modHeader.png" width="1280" alt="Sonic Unleashed Logo" />
 
 # The Unleashed Experience
 
