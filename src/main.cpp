@@ -7,12 +7,21 @@
 
 using namespace geode::prelude;
 
+bool unleashedSounds = true;
+bool unleashedRankings = true;
+
 int genRandomInt(int min, int max) {
     std::random_device rd;  // Obtain a random number from hardware
     std::mt19937 gen(rd()); // Seed the generator
     std::uniform_int_distribution<> distr(min, max); // Define the range
 
     return distr(gen);
+}
+
+class $modify(PlayerObject){
+    void incrementJumps() {
+        PlayerObject::incrementJumps();
+    }
 }
 
 class $modify(PlayLayer) {
@@ -132,27 +141,4 @@ class $modify(EndLevelLayer) {
         }
     }
 
-};
-
-class $modify(PlayerObject){
-	void updateTimeMod(float p0, bool p1) {
-        
-        PlayerObject::updateTimeMod(p0, p1);
-
-        if (unleashedSounds && PlayLayer::get()) {
-            auto fmod = FMODAudioEngine::sharedEngine();
-            int randomBoost = genRandomInt(1, 7);
-            auto sfxToPlayBoost = fmt::format("boost_{}.ogg"_spr, randomBoost);
-
-            int doPlaySound = genRandomInt(1, 10);
-
-            if (p0 >= 1.5f) {
-                fmod->playEffect("boost_fullsfx.ogg"_spr);
-                if (doPlaySound >= 3) {
-                    fmod->playEffect(sfxToPlayBoost);
-                }
-            }
-        }
-    }
-	
 };
