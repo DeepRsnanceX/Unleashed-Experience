@@ -82,11 +82,78 @@ class $modify(PlayLayer) {
     bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
         if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
 
-        if (unleashedSounds) {
-            auto fmod = FMODAudioEngine::sharedEngine();
-            fmod->playEffect("herewe.ogg"_spr);
-        }
-        
+        auto fmod = FMODAudioEngine::sharedEngine();
+        fmod->playEffect("herewe.ogg"_spr);
+
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
+        auto goBackSprite = CCSprite::createWithSpriteFrameName("go_backsprite.png"_spr);
+        auto goMainSprite = CCSprite::createWithSpriteFrameName("go_mainsprite.png"_spr);
+
+        goBackSprite->setOpacity(0);
+        goMainSprite->setOpacity(0);
+
+        // center both sprites
+        goBackSprite->setPosition({winSize.width / 2, winSize.height / 2});
+        goMainSprite->setPosition({winSize.width / 2, winSize.height / 2});
+
+        goBackSprite->setScale(1.75f);
+        goMainSprite->setScale(5.0f);
+
+        // IDs for fetching
+        goBackSprite->setID("go-back-sprite"_spr);
+        goMainSprite->setID("go-main-sprite"_spr);
+
+        goBackSprite->setZOrder(100);
+        goMainSprite->setZOrder(100);
+
+        this->addChild(goBackSprite);
+        this->addChild(goMainSprite);
+
+        // ---------------------------------
+        // UNLEASHED HUD
+        // ---------------------------------
+
+        auto UnleashedHUD = CCNode::create();
+        UnleashedHUD->setID("UnleashedHUD");
+        UnleashedHUD->setScale(0.65f);
+        UnleashedHUD->setPosition({4, 257});
+        UnleashedHUD->setZOrder(100);
+        this->addChild(UnleashedHUD);
+
+        // cocos2d::ccColor3b to tint the bars with, use #3C4E86
+        auto timeBarBigColor = ccc3(0x3C, 0x4E, 0x86);
+        // color for the top bars, use 
+
+        auto timeBar = CCSprite::createWithSpriteFrameName("hudBar_big.png"_spr);
+        auto timeBarOverlay = CCSprite::createWithSpriteFrameName("hudBar_bigOverlay.png"_spr);
+        auto timeBarNode = CCNode::create();
+        auto attsBar = CCSprite::createWithSpriteFrameName("hudBar_big.png"_spr);
+        auto attsBarOverlay = CCSprite::createWithSpriteFrameName("hudBar_bigOverlay.png"_spr);
+        auto attsBarNode = CCNode::create();
+
+        timeBar->setID("time-bar-main"_spr);
+        timeBarOverlay->setID("time-bar-overlay"_spr);
+        attsBar->setID("atts-bar-main"_spr);
+        attsBarOverlay->setID("atts-bar-overlay"_spr);
+        timeBarNode->setID("time-bar"_spr);
+        attsBarNode->setID("atts-bar"_spr);
+        attsBarNode->setPosition({0, -35});
+
+        timeBar->setColor(timeBarBigColor);
+        attsBar->setColor(timeBarBigColor);
+        timeBarOverlay->setOpacity(25);
+        attsBarOverlay->setOpacity(25);
+        timeBarOverlay->setZOrder(1);
+        attsBarOverlay->setZOrder(1);
+
+        timeBarNode->addChild(timeBar);
+        timeBarNode->addChild(timeBarOverlay);
+        attsBarNode->addChild(attsBar);
+        attsBarNode->addChild(attsBarOverlay);
+
+        UnleashedHUD->addChild(timeBarNode);
+        UnleashedHUD->addChild(attsBarNode);
+
         return true;
     }
 
@@ -95,6 +162,52 @@ class $modify(PlayLayer) {
 
         auto fmod = FMODAudioEngine::sharedEngine();
         fmod->playEffect("go.ogg"_spr);
+
+        auto goBackSprite = this->getChildByID("go-back-sprite"_spr);
+        auto goMainSprite = this->getChildByID("go-main-sprite"_spr);
+
+        // create actions in order to animate the sprites
+        auto showBack = CCFadeTo::create(0.05f, 100);
+        auto showMain = CCSequence::create(
+            CCDelayTime::create(0.1f),
+            CCFadeIn::create(0.15f),
+            nullptr
+        );
+        auto scaleMain = CCSequence::create(
+            CCDelayTime::create(0.1f),
+            CCEaseIn::create(CCScaleTo::create(0.15f, 1.75f), 2.0f),
+            nullptr
+        );
+        auto scaleBack = CCSequence::create(
+            CCDelayTime::create(0.26f),
+            CCEaseExponentialOut::create(CCScaleTo::create(0.15f, 12.0f)),
+            nullptr
+        );
+        auto fadeOutBack = CCSequence::create(
+            CCDelayTime::create(0.26f),
+            CCEaseExponentialOut::create(CCFadeOut::create(0.15f)),
+            nullptr
+        );
+        auto squishMain = CCSequence::create(
+            CCDelayTime::create(1.28f),
+            CCEaseBackIn::create(CCScaleBy::create(0.08f, 2.5f, 0.1f)),
+            nullptr
+        );
+        auto fadeOutMain = CCSequence::create(
+            CCDelayTime::create(1.36f),
+            CCFadeOut::create(0.05f),
+            nullptr
+        );
+
+        // run actions
+        goBackSprite->runAction(showBack);
+        goMainSprite->runAction(showMain);
+        goMainSprite->runAction(scaleMain);
+        goBackSprite->runAction(scaleBack);
+        goBackSprite->runAction(fadeOutBack);
+        goMainSprite->runAction(squishMain);
+        goMainSprite->runAction(fadeOutMain);
+
     }
 
     void levelComplete() {
@@ -129,47 +242,51 @@ class $modify(EndLevelLayer) {
     void customSetup() {
         EndLevelLayer::customSetup();
 
-        if (unleashedRankings) {
-            int attempts = m_playLayer->m_attempts;
-            auto fmod = FMODAudioEngine::sharedEngine();
+        int attempts = m_playLayer->m_attempts;
+        auto fmod = FMODAudioEngine::sharedEngine();
 
-            auto rankSprite = CCSprite::createWithSpriteFrameName("rank_placeholder.png"_spr);
-            rankSprite->setOpacity(0);
-            rankSprite->setZOrder(10);
-            rankSprite->setPosition({50, 50});
-            rankSprite->setID("rank-sprite"_spr);
-            rankSprite->setScale(9.0f);
-            this->addChild(rankSprite);
+        auto rankSprite = CCSprite::createWithSpriteFrameName("rank_placeholder.png"_spr);
+        rankSprite->setOpacity(0);
+        rankSprite->setZOrder(10);
+        rankSprite->setPosition({50, 50});
+        rankSprite->setID("rank-sprite"_spr);
+        rankSprite->setScale(9.0f);
+        this->addChild(rankSprite);
 
-            geode::log::debug("attempts: {}", attempts);
+        geode::log::debug("attempts: {}", attempts);
 
-            bool rankS = attempts == 1;
-            bool rankA = attempts == 2 || attempts == 3;
-            bool rankB = attempts >= 4 && attempts <= 6;
-            bool rankC = attempts >= 7 && attempts <= 10;
-            bool rankD = attempts >= 11 && attempts <= 15;
-            bool rankE = attempts > 16;
+        bool rankS = attempts == 1;
+        bool rankA = attempts == 2 || attempts == 3;
+        bool rankB = attempts >= 4 && attempts <= 6;
+        bool rankC = attempts >= 7 && attempts <= 10;
+        bool rankD = attempts >= 11 && attempts <= 15;
+        bool rankE = attempts > 16;
 
-            if (rankS) {
-                rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_s.png"_spr));
-                fmod->playEffect("rankS.ogg"_spr);
-            } else if (rankA) {
-                rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_a.png"_spr));
-                fmod->playEffect("rankA.ogg"_spr);
-            } else if (rankB) {
-                rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_b.png"_spr));
-                fmod->playEffect("rankC.ogg"_spr);
-            } else if (rankC) {
-                rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_c.png"_spr));
-                fmod->playEffect("rankC.ogg"_spr);
-            } else if (rankD) {
-                rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_d.png"_spr));
-                fmod->playEffect("rankC.ogg"_spr);
-            } else if (rankE) {
-                rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_e.png"_spr));
-                fmod->playEffect("rankE.ogg"_spr);
-            }
+        if (rankS) {
+            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_s.png"_spr));
+            fmod->playEffect("rankS.ogg"_spr);
+        } else if (rankA) {
+            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_a.png"_spr));
+            fmod->playEffect("rankA.ogg"_spr);
+        } else if (rankB) {
+            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_b.png"_spr));
+            fmod->playEffect("rankC.ogg"_spr);
+        } else if (rankC) {
+            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_c.png"_spr));
+            fmod->playEffect("rankC.ogg"_spr);
+        } else if (rankD) {
+            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_d.png"_spr));
+            fmod->playEffect("rankC.ogg"_spr);
+        } else if (rankE) {
+            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_e.png"_spr));
+            fmod->playEffect("rankE.ogg"_spr);
         }
+
+        // ---------------------------------
+        // UNLEASHED RANKING SCREEN
+        // MAKING THIS IS GONNA BE A PAIN
+        // ---------------------------------
+
         
     }
 
@@ -181,16 +298,18 @@ class $modify(EndLevelLayer) {
     void showLayer(bool p0) {
         EndLevelLayer::showLayer(p0);
 
-        if (unleashedRankings) {
-            auto ranking = this->getChildByID("rank-sprite"_spr);
+        auto literallyTheEndscreen = this->getChildByID("main-layer");
+        literallyTheEndscreen->stopAllActions();
+        literallyTheEndscreen->setVisible(false);
+        
+        auto ranking = this->getChildByID("rank-sprite"_spr);
 
-            // animations
-            auto fadeIn = CCFadeIn::create(0.3f);
-            auto scaleDown = CCScaleTo::create(0.3, 1.75f);
+        // animations
+        auto fadeIn = CCFadeIn::create(0.3f);
+        auto scaleDown = CCScaleTo::create(0.3, 1.75f);
 
-            ranking->runAction(fadeIn);
-            ranking->runAction(scaleDown);
-        }
+        ranking->runAction(fadeIn);
+        ranking->runAction(scaleDown);
     }
 
 };
