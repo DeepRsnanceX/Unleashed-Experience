@@ -2,7 +2,9 @@
 #include <Geode/modify/PlayLayer.hpp>
 #include <Geode/modify/EndLevelLayer.hpp>
 #include <Geode/binding/GJGameLevel.hpp>
+#include <Geode/binding/GJBaseGameLayer.hpp>
 #include <Geode/loader/SettingV3.hpp>
+#include "helper.hpp"
 #include <random>
 
 using namespace geode::prelude;
@@ -113,6 +115,7 @@ class $modify(PlayLayer) {
         // UNLEASHED HUD
         // ---------------------------------
 
+        // unleashed HUD node 
         auto UnleashedHUD = CCNode::create();
         UnleashedHUD->setID("UnleashedHUD");
         UnleashedHUD->setScale(0.65f);
@@ -121,38 +124,129 @@ class $modify(PlayLayer) {
         this->addChild(UnleashedHUD);
 
         // cocos2d::ccColor3b to tint the bars with, use #3C4E86
-        auto timeBarBigColor = ccc3(0x3C, 0x4E, 0x86);
-        // color for the top bars, use 
+        auto hudBarColor = ccc3(0x3C, 0x4E, 0x86);
 
+        // time bar setup
         auto timeBar = CCSprite::createWithSpriteFrameName("hudBar_big.png"_spr);
         auto timeBarOverlay = CCSprite::createWithSpriteFrameName("hudBar_bigOverlay.png"_spr);
         auto timeBarNode = CCNode::create();
-        auto attsBar = CCSprite::createWithSpriteFrameName("hudBar_big.png"_spr);
-        auto attsBarOverlay = CCSprite::createWithSpriteFrameName("hudBar_bigOverlay.png"_spr);
-        auto attsBarNode = CCNode::create();
 
         timeBar->setID("time-bar-main"_spr);
         timeBarOverlay->setID("time-bar-overlay"_spr);
-        attsBar->setID("atts-bar-main"_spr);
-        attsBarOverlay->setID("atts-bar-overlay"_spr);
         timeBarNode->setID("time-bar"_spr);
-        attsBarNode->setID("atts-bar"_spr);
-        attsBarNode->setPosition({0, -35});
-
-        timeBar->setColor(timeBarBigColor);
-        attsBar->setColor(timeBarBigColor);
+        timeBar->setColor(hudBarColor);
         timeBarOverlay->setOpacity(25);
-        attsBarOverlay->setOpacity(25);
         timeBarOverlay->setZOrder(1);
-        attsBarOverlay->setZOrder(1);
 
         timeBarNode->addChild(timeBar);
         timeBarNode->addChild(timeBarOverlay);
-        attsBarNode->addChild(attsBar);
-        attsBarNode->addChild(attsBarOverlay);
 
+        // attempts bar setup
+        auto jumpsBar = CCSprite::createWithSpriteFrameName("hudBar_big.png"_spr);
+        auto jumpsBarOverlay = CCSprite::createWithSpriteFrameName("hudBar_bigOverlay.png"_spr);
+        auto jumpsBarNode = CCNode::create();
+
+        jumpsBar->setID("jumps-bar-main"_spr);
+        jumpsBarOverlay->setID("jumps-bar-overlay"_spr);
+        jumpsBarNode->setID("jumps-bar"_spr);
+        jumpsBarNode->setPosition({0, -35});
+        jumpsBar->setColor(hudBarColor);
+        jumpsBarOverlay->setOpacity(25);
+        jumpsBarOverlay->setZOrder(1);
+
+        jumpsBarNode->addChild(jumpsBar);
+        jumpsBarNode->addChild(jumpsBarOverlay);
+
+        // time bar smaller setup
+        auto timeBarSmall = CCSprite::createWithSpriteFrameName("hudBar_small.png"_spr);
+        auto timeBarSmallOverlay = CCSprite::createWithSpriteFrameName("hudBar_smallOverlay.png"_spr);
+        auto timeTitle = CCSprite::createWithSpriteFrameName("timeTitle.png"_spr);
+        auto timeBarSmallNode = CCNode::create();
+
+        timeBarSmall->setID("time-bar-small-main"_spr);
+        timeBarSmallOverlay->setID("time-bar-small-overlay"_spr);
+        timeBarSmallNode->setID("time-bar-small"_spr);
+        timeTitle->setID("time-title"_spr);
+        timeBarSmallNode->setPosition({-27, 14});
+        timeBarSmallNode->setZOrder(2);
+        timeBarSmallNode->setScale(0.9f);
+        timeBarSmall->setColor(hudBarColor);
+        timeBarSmallOverlay->setOpacity(80);
+        timeBarSmallOverlay->setZOrder(1);
+        timeTitle->setZOrder(3);
+        timeTitle->setPosition({137, 1});
+        timeTitle->setScale(3.0f);
+
+        timeBarSmallNode->addChild(timeBarSmall);
+        timeBarSmallNode->addChild(timeBarSmallOverlay);
+        timeBarSmallNode->addChild(timeTitle);
+
+        // attempts bar smaller setup
+        auto jumpsBarSmall = CCSprite::createWithSpriteFrameName("hudBar_small.png"_spr);
+        auto jumpsBarSmallOverlay = CCSprite::createWithSpriteFrameName("hudBar_smallOverlay.png"_spr);
+        auto jumpsTitle = CCSprite::createWithSpriteFrameName("jumpsTitle.png"_spr);
+        auto jumpsBarSmallNode = CCNode::create();
+
+        jumpsBarSmall->setID("jumps-bar-small-main"_spr);
+        jumpsBarSmallOverlay->setID("jumps-bar-small-overlay"_spr);
+        jumpsBarSmallNode->setID("jumps-bar-small"_spr);
+        jumpsTitle->setID("jumps-title"_spr);
+        jumpsBarSmallNode->setPosition({-27, -21});
+        jumpsBarSmallNode->setZOrder(2);
+        jumpsBarSmallNode->setScale(0.9f);
+        jumpsBarSmall->setColor(hudBarColor);
+        jumpsBarSmallOverlay->setOpacity(80);
+        jumpsBarSmallOverlay->setZOrder(1);
+        jumpsTitle->setZOrder(3);
+        jumpsTitle->setPosition({142, 1});
+        jumpsTitle->setScale(3.0f);
+
+        jumpsBarSmallNode->addChild(jumpsBarSmall);
+        jumpsBarSmallNode->addChild(jumpsBarSmallOverlay);
+        jumpsBarSmallNode->addChild(jumpsTitle);
+
+        // lives icon
+        auto livesIcon = CCSprite::createWithSpriteFrameName("lifeIcon.png"_spr);
+        livesIcon->setID("lives-icon"_spr);
+        livesIcon->setPosition({92.5f, 39.5f});
+        livesIcon->setScale(1.1f);
+
+        // lives label
+        auto lives = level->m_stars;
+        auto livesLabel = CCLabelBMFont::create(std::to_string(lives).c_str(), "unleashedHUDFont.fnt"_spr);
+        livesLabel->setID("lives-label"_spr);
+        livesLabel->setPosition({123.5f, 38.5f});
+        livesLabel->setScaleX(1.1f);
+        livesLabel->setScaleY(0.9f);
+
+        // time label
+        auto levelTimeText = level->m_attemptTime.value();
+        auto timeLabel = CCLabelBMFont::create(std::to_string(levelTimeText).c_str(), "unleashedHUDFont.fnt"_spr);
+        timeLabel->setID("time-label"_spr);
+        timeLabel->setScaleX(1.1f);
+        timeLabel->setScaleY(0.9f);
+        timeLabel->scheduleUpdate();
+        timeLabel->setPosition({121.0f, 1.5f});
+        timeLabel->setScale(0.65f);
+
+        // jumps label
+        auto jumpsLabel = CCLabelBMFont::create(std::to_string(m_jumps).c_str(), "unleashedHUDFont.fnt"_spr);
+        jumpsLabel->setID("jumps-label"_spr);
+        jumpsLabel->setScaleX(1.1f);
+        jumpsLabel->setScaleY(0.9f);
+        jumpsLabel->scheduleUpdate();
+        jumpsLabel->setPosition({121.0f, -33.0f});
+        jumpsLabel->setScale(0.65f);
+
+        // add everything to the HUD node
         UnleashedHUD->addChild(timeBarNode);
-        UnleashedHUD->addChild(attsBarNode);
+        UnleashedHUD->addChild(jumpsBarNode);
+        UnleashedHUD->addChild(timeBarSmallNode);
+        UnleashedHUD->addChild(jumpsBarSmallNode);
+        UnleashedHUD->addChild(livesIcon);
+        UnleashedHUD->addChild(livesLabel);
+        UnleashedHUD->addChild(timeLabel);
+        UnleashedHUD->addChild(jumpsLabel);
 
         return true;
     }

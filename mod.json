@@ -16,7 +16,9 @@
 			]
 		},
 		"files": [
-			"resources/sfx/*.ogg"
+			"resources/sfx/*.ogg",
+			"resources/fonts/*.png",
+			"resources/fonts/*.fnt"
 		]
 	},
 	"id": "saritahhh.unleashed_experience",
