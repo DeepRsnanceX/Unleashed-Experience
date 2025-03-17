@@ -12,6 +12,8 @@ using namespace geode::prelude;
 bool unleashedSounds = true;
 bool unleashedRankings = true;
 
+float playerSpeedMain = 0.f;
+
 int genRandomInt(int min, int max) {
     std::random_device rd;  // Obtain a random number from hardware
     std::mt19937 gen(rd()); // Seed the generator
@@ -21,6 +23,7 @@ int genRandomInt(int min, int max) {
 }
 
 class $modify(PlayerObject){
+
     void startDashing(DashRingObject* p0) {
         PlayerObject::startDashing(p0);
 
@@ -60,8 +63,9 @@ class $modify(PlayerObject){
     }
 
     void updateTimeMod(float p0, bool p1) {
-        
         PlayerObject::updateTimeMod(p0, p1);
+
+        playerSpeedMain = p0;
 
         if (PlayLayer::get()) {
             auto fmod = FMODAudioEngine::sharedEngine();
@@ -81,10 +85,40 @@ class $modify(PlayerObject){
 };
 
 class $modify(PlayLayer) {
+    struct Fields{
+        // labels
+        CCLabelBMFont* timeLabel = nullptr;
+        CCLabelBMFont* jumpsLabel = nullptr;
+        CCLabelBMFont* attemptsLabel = nullptr;
+        // --------------------
+        // RING ENERGY
+        // --------------------
+        // energy gauge
+        CCSprite* ringEnergyMeter = nullptr;
+        // speed fills
+        CCSprite* energySlow = nullptr;
+        CCSprite* energyNrml = nullptr;
+        CCSprite* energyFast = nullptr;
+        CCSprite* energyVFast = nullptr;
+        CCSprite* energyVVFast = nullptr;
+        // progress fills
+        CCSprite* energyProgress10 = nullptr;
+        CCSprite* energyProgress20 = nullptr;
+        CCSprite* energyProgress30 = nullptr;
+        CCSprite* energyProgress40 = nullptr;
+        CCSprite* energyProgress50 = nullptr;
+        CCSprite* energyProgress60 = nullptr;
+        CCSprite* energyProgress70 = nullptr;
+        CCSprite* energyProgress80 = nullptr;
+        CCSprite* energyProgress90 = nullptr;
+        CCSprite* energyProgress100 = nullptr;
+    };
+
     bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
         if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
 
         auto fmod = FMODAudioEngine::sharedEngine();
+        auto fields = m_fields.self();
         fmod->playEffect("herewe.ogg"_spr);
 
         auto winSize = CCDirector::sharedDirector()->getWinSize();
@@ -117,7 +151,7 @@ class $modify(PlayLayer) {
 
         // unleashed HUD node 
         auto UnleashedHUD = CCNode::create();
-        UnleashedHUD->setID("UnleashedHUD");
+        UnleashedHUD->setID("UnleashedHUD"_spr);
         UnleashedHUD->setScale(0.65f);
         UnleashedHUD->setPosition({4, 257});
         UnleashedHUD->setZOrder(100);
@@ -220,23 +254,75 @@ class $modify(PlayLayer) {
         livesLabel->setScaleY(0.9f);
 
         // time label
-        auto levelTimeText = level->m_attemptTime.value();
-        auto timeLabel = CCLabelBMFont::create(std::to_string(levelTimeText).c_str(), "unleashedHUDFont.fnt"_spr);
-        timeLabel->setID("time-label"_spr);
-        timeLabel->setScaleX(1.1f);
-        timeLabel->setScaleY(0.9f);
-        timeLabel->scheduleUpdate();
-        timeLabel->setPosition({121.0f, 1.5f});
-        timeLabel->setScale(0.65f);
+        std::string timePlaceholder = fmt::format("00:00:00");
+        fields->timeLabel = CCLabelBMFont::create(timePlaceholder.c_str(), "unleashedHUDFont.fnt"_spr);
+        fields->timeLabel->setID("time-label"_spr);
+        fields->timeLabel->setScaleX(1.1f);
+        fields->timeLabel->setScaleY(0.9f);
+        fields->timeLabel->scheduleUpdate();
+        fields->timeLabel->setPosition({90.0f, 1.5f});
+        fields->timeLabel->setScale(0.65f);
+        fields->timeLabel->setAlignment(kCCTextAlignmentRight);
+        fields->timeLabel->setAnchorPoint({0.f, 0.5f});
 
         // jumps label
-        auto jumpsLabel = CCLabelBMFont::create(std::to_string(m_jumps).c_str(), "unleashedHUDFont.fnt"_spr);
-        jumpsLabel->setID("jumps-label"_spr);
-        jumpsLabel->setScaleX(1.1f);
-        jumpsLabel->setScaleY(0.9f);
-        jumpsLabel->scheduleUpdate();
-        jumpsLabel->setPosition({121.0f, -33.0f});
-        jumpsLabel->setScale(0.65f);
+        std::string jumpsPlaceholder = fmt::format("0000000");
+        fields->jumpsLabel = CCLabelBMFont::create(jumpsPlaceholder.c_str(), "unleashedHUDFont.fnt"_spr);
+        fields->jumpsLabel->setID("jumps-label"_spr);
+        fields->jumpsLabel->setScaleX(1.1f);
+        fields->jumpsLabel->setScaleY(0.9f);
+        fields->jumpsLabel->scheduleUpdate();
+        fields->jumpsLabel->setPosition({90.0f, -33.0f});
+        fields->jumpsLabel->setScale(0.65f);
+        fields->jumpsLabel->setAlignment(kCCTextAlignmentRight);
+        fields->jumpsLabel->setAnchorPoint({0.f, 0.5f});
+
+        // --- RING ENERGY STUFFFFF ---
+        auto ringEnergyGaugeNode = CCNode::create();
+        fields->ringEnergyMeter = CCSprite::createWithSpriteFrameName("energy_meter.png"_spr);
+        fields->ringEnergyMeter->setZOrder(2);
+        fields->energySlow = CCSprite::createWithSpriteFrameName("energy_slow.png"_spr);
+        fields->energyNrml = CCSprite::createWithSpriteFrameName("energy_normal.png"_spr);
+        fields->energyFast = CCSprite::createWithSpriteFrameName("energy_fast.png"_spr);
+        fields->energyVFast = CCSprite::createWithSpriteFrameName("energy_vfast.png"_spr);
+        fields->energyVVFast = CCSprite::createWithSpriteFrameName("energy_vvfast.png"_spr);
+        fields->energyProgress10 = CCSprite::createWithSpriteFrameName("energy_10.png"_spr);
+        fields->energyProgress20 = CCSprite::createWithSpriteFrameName("energy_20.png"_spr);
+        fields->energyProgress30 = CCSprite::createWithSpriteFrameName("energy_30.png"_spr);
+        fields->energyProgress40 = CCSprite::createWithSpriteFrameName("energy_40.png"_spr);
+        fields->energyProgress50 = CCSprite::createWithSpriteFrameName("energy_50.png"_spr);
+        fields->energyProgress60 = CCSprite::createWithSpriteFrameName("energy_60.png"_spr);
+        fields->energyProgress70 = CCSprite::createWithSpriteFrameName("energy_70.png"_spr);
+        fields->energyProgress80 = CCSprite::createWithSpriteFrameName("energy_80.png"_spr);
+        fields->energyProgress90 = CCSprite::createWithSpriteFrameName("energy_90.png"_spr);
+        fields->energyProgress100 = CCSprite::createWithSpriteFrameName("energy_100.png"_spr);
+
+        fields->attemptsLabel = CCLabelBMFont::create(fmt::format("{}",m_attempts).c_str(), "unleashedHUDFont.fnt"_spr);
+        fields->attemptsLabel->setZOrder(2);
+        fields->attemptsLabel->setScale(0.2f);
+        fields->attemptsLabel->setAnchorPoint({0.f, 0.5f});
+        fields->attemptsLabel->setPosition({-50.0f, -1.0f});
+
+        ringEnergyGaugeNode->addChild(fields->ringEnergyMeter);
+        ringEnergyGaugeNode->addChild(fields->energySlow);
+        ringEnergyGaugeNode->addChild(fields->energyNrml);
+        ringEnergyGaugeNode->addChild(fields->energyFast);
+        ringEnergyGaugeNode->addChild(fields->energyVFast);
+        ringEnergyGaugeNode->addChild(fields->energyVVFast);
+        ringEnergyGaugeNode->addChild(fields->energyProgress10);
+        ringEnergyGaugeNode->addChild(fields->energyProgress20);
+        ringEnergyGaugeNode->addChild(fields->energyProgress30);
+        ringEnergyGaugeNode->addChild(fields->energyProgress40);
+        ringEnergyGaugeNode->addChild(fields->energyProgress50);
+        ringEnergyGaugeNode->addChild(fields->energyProgress60);
+        ringEnergyGaugeNode->addChild(fields->energyProgress70);
+        ringEnergyGaugeNode->addChild(fields->energyProgress80);
+        ringEnergyGaugeNode->addChild(fields->energyProgress90);
+        ringEnergyGaugeNode->addChild(fields->energyProgress100);
+        ringEnergyGaugeNode->addChild(fields->attemptsLabel);
+
+        ringEnergyGaugeNode->setScale(2.73f);
+        ringEnergyGaugeNode->setPosition({245.0f, -338.0f});
 
         // add everything to the HUD node
         UnleashedHUD->addChild(timeBarNode);
@@ -245,10 +331,66 @@ class $modify(PlayLayer) {
         UnleashedHUD->addChild(jumpsBarSmallNode);
         UnleashedHUD->addChild(livesIcon);
         UnleashedHUD->addChild(livesLabel);
-        UnleashedHUD->addChild(timeLabel);
-        UnleashedHUD->addChild(jumpsLabel);
+        UnleashedHUD->addChild(fields->timeLabel);
+        UnleashedHUD->addChild(fields->jumpsLabel);
+        UnleashedHUD->addChild(ringEnergyGaugeNode);
 
         return true;
+    }
+
+    void updateProgressbar() {
+        PlayLayer::updateProgressbar();
+    
+        auto baseLayer = GJBaseGameLayer::get();
+        auto fields = m_fields.self();
+        float currentTime = baseLayer->m_gameState.m_levelTime;
+    
+        int minutes = static_cast<int>(currentTime) / 60;
+        int seconds = static_cast<int>(currentTime) % 60;
+        int milliseconds = static_cast<int>((currentTime - static_cast<int>(currentTime)) * 100);
+        std::string levelTimeText = fmt::format("{:02}:{:02}:{:02}", minutes, seconds, milliseconds);
+
+        auto jumpAmount = m_jumps;
+        std::string jumpsText = fmt::format("{:06}", jumpAmount);
+
+        std::string attemptsText = fmt::format("{:03}", m_attempts);
+    
+        if (fields->timeLabel) {
+            fields->timeLabel->setString(levelTimeText.c_str(), true);
+        }
+        if (fields->jumpsLabel) {
+            fields->jumpsLabel->setString(jumpsText.c_str(), true);
+        }
+        if (fields->attemptsLabel) {
+            fields->attemptsLabel->setString(attemptsText.c_str(), true);
+        }
+
+        // ring energy gauge
+        auto currentPercent = getCurrentPercentInt();
+        bool progressBarsCreated = fields->energyProgress10 && fields->energyProgress20 && fields->energyProgress30 && fields->energyProgress40 && fields->energyProgress50 && fields->energyProgress60 && fields->energyProgress70 && fields->energyProgress80 && fields->energyProgress90 && fields->energyProgress100;
+        bool energyBarsCreated = fields->energySlow && fields->energyNrml && fields->energyFast && fields->energyVFast && fields->energyVVFast;
+
+        if (progressBarsCreated) {
+            fields->energyProgress10->setVisible(currentPercent >= 10);
+            fields->energyProgress20->setVisible(currentPercent >= 20);
+            fields->energyProgress30->setVisible(currentPercent >= 30);
+            fields->energyProgress40->setVisible(currentPercent >= 40);
+            fields->energyProgress50->setVisible(currentPercent >= 50);
+            fields->energyProgress60->setVisible(currentPercent >= 60);
+            fields->energyProgress70->setVisible(currentPercent >= 70);
+            fields->energyProgress80->setVisible(currentPercent >= 80);
+            fields->energyProgress90->setVisible(currentPercent >= 90);
+            fields->energyProgress100->setVisible(currentPercent >= 100);
+        }
+
+        if (energyBarsCreated) {
+            fields->energySlow->setVisible(playerSpeedMain >= 0.7f);
+            fields->energyNrml->setVisible(playerSpeedMain >= 0.9f);
+            fields->energyFast->setVisible(playerSpeedMain >= 1.1f);
+            fields->energyVFast->setVisible(playerSpeedMain >= 1.3f);
+            fields->energyVVFast->setVisible(playerSpeedMain >= 1.6f);
+        }
+
     }
 
     void startGame() {
@@ -308,27 +450,27 @@ class $modify(PlayLayer) {
         PlayLayer::levelComplete();
         auto fmod = FMODAudioEngine::sharedEngine();
 
-        if (unleashedSounds){
-            fmod->playEffect("goal_ring.ogg"_spr);
+        fmod->playEffect("goal_ring.ogg"_spr);
+        int attempts = this->m_attempts;
+
+        int randomBest = genRandomInt(1, 6);
+        int randomGood = genRandomInt(1, 5);
+        int randomBad = genRandomInt(1, 5);
+
+        if (attempts <= 3) {
+            fmod->playEffect(fmt::format("complete_best_{}.ogg"_spr, randomBest));
+        } else if (attempts > 3 && attempts <= 10) {
+            fmod->playEffect(fmt::format("complete_good_{}.ogg"_spr, randomGood));
+        } else {
+            fmod->playEffect(fmt::format("complete_bad_{}.ogg"_spr, randomBad));
         }
 
-        if(unleashedRankings){
+        fmod->fadeOutMusic(1.5f, 0);
+        fmod->fadeOutMusic(1.5f, 1);
+        fmod->fadeOutMusic(1.5f, 2);
+        fmod->fadeOutMusic(1.5f, 3);
+        fmod->fadeOutMusic(1.5f, 4);
 
-            int attempts = this->m_attempts;
-
-            int randomBest = genRandomInt(1, 6);
-            int randomGood = genRandomInt(1, 5);
-            int randomBad = genRandomInt(1, 5);
-
-            if (attempts <= 3) {
-                fmod->playEffect(fmt::format("complete_best_{}.ogg"_spr, randomBest));
-            } else if (attempts > 3 && attempts <= 10) {
-                fmod->playEffect(fmt::format("complete_good_{}.ogg"_spr, randomGood));
-            } else {
-                fmod->playEffect(fmt::format("complete_bad_{}.ogg"_spr, randomBad));
-            }
-
-        }
     }
 };
 
@@ -382,11 +524,6 @@ class $modify(EndLevelLayer) {
         // ---------------------------------
 
         
-    }
-
-    void onHideLayer(CCObject* sender) {
-        EndLevelLayer::onHideLayer(sender);
-        geode::log::debug("when escondes el endlevel layer");
     }
 
     void showLayer(bool p0) {
