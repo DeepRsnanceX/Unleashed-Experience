@@ -55,134 +55,205 @@ class $modify(EndLevelLayer) {
         // -----------------------
         // RANKING SCREEN ELEMENTS
         // -----------------------
+        // --- ranking sprite
+        CCSprite* rankingSprite = CCSprite::createWithSpriteFrameName("rank_placeholder.png"_spr);
         // --- big results bar
-        CCNode* resultsNode = CCNode::create();
-        CCSprite* resultsBar = CCSprite::createWithSpriteFrameName("hudBar_huge.png"_spr);
-        CCSprite* resultsBarOverlay = CCSprite::createWithSpriteFrameName("hudBar_hugeOverlay.png"_spr);
+        CCSprite* resultsBar = CCSprite::createWithSpriteFrameName("topResultsBar.png"_spr);
         // --- data bars: TIME, ATTEMPTS, JUMPS, SPEED
         CCSprite* timerBar = CCSprite::createWithSpriteFrameName("resultsBar.png"_spr);
-        CCSprite* timerBarOverlay = CCSprite::createWithSpriteFrameName("resultsBarOverlay.png"_spr);
-        CCNode* timerBarNode = CCNode::create();
         CCSprite* attemptsBar = CCSprite::createWithSpriteFrameName("resultsBar.png"_spr);
-        CCSprite* attemptsBarOverlay = CCSprite::createWithSpriteFrameName("resultsBarOverlay.png"_spr);
-        CCNode* attemptsBarNode = CCNode::create();
         CCSprite* jumpsBar = CCSprite::createWithSpriteFrameName("resultsBar.png"_spr);
-        CCSprite* jumpsBarOverlay = CCSprite::createWithSpriteFrameName("resultsBarOverlay.png"_spr);
-        CCNode* jumpsBarNode = CCNode::create();
-        CCSprite* speedBar = CCSprite::createWithSpriteFrameName("resultsBar.png"_spr);
-        CCSprite* speedBarOverlay = CCSprite::createWithSpriteFrameName("resultsBarOverlay.png"_spr);
-        CCNode* speedBarNode = CCNode::create();
+        CCSprite* coinsBar = CCSprite::createWithSpriteFrameName("resultsBar.png"_spr);
         // --- title bars for all the last ones
-        CCNode* timeTitleNode = CCNode::create();
-        CCSprite* timeTitle = CCSprite::createWithSpriteFrameName("ranking_titleBar.png"_spr);
-        CCSprite* timeTitleOverlay = CCSprite::createWithSpriteFrameName("ranking_titleBarOverlay.png"_spr);
-        CCNode* attemptsTitleNode = CCNode::create();
-        CCSprite* attemptsTitle = CCSprite::createWithSpriteFrameName("ranking_titleBar.png"_spr);
-        CCSprite* attemptsTitleOverlay = CCSprite::createWithSpriteFrameName("ranking_titleBarOverlay.png"_spr);
-        CCNode* jumpsTitleNode = CCNode::create();
-        CCSprite* jumpsTitle = CCSprite::createWithSpriteFrameName("ranking_titleBar.png"_spr);
-        CCSprite* jumpsTitleOverlay = CCSprite::createWithSpriteFrameName("ranking_titleBarOverlay.png"_spr);
-        CCNode* speedTitleNode = CCNode::create();
-        CCSprite* speedTitle = CCSprite::createWithSpriteFrameName("ranking_titleBar.png"_spr);
-        CCSprite* speedTitleOverlay = CCSprite::createWithSpriteFrameName("ranking_titleBarOverlay.png"_spr);
+        CCSprite* timeTitle = CCSprite::createWithSpriteFrameName("endTimeTitle.png"_spr);
+        CCSprite* attemptsTitle = CCSprite::createWithSpriteFrameName("endAttTitle.png"_spr);
+        CCSprite* jumpsTitle = CCSprite::createWithSpriteFrameName("endJumpsTitle.png"_spr);
+        CCSprite* coinsTitle = CCSprite::createWithSpriteFrameName("endCoinsTitle.png"_spr);
+        // --- total bar and title
+        CCSprite* totalBar = CCSprite::createWithSpriteFrameName("totalBar.png"_spr);
+        CCSprite* totalTitle = CCSprite::createWithSpriteFrameName("totalTitle.png"_spr);
+        // --- rank text
+        CCSprite* rankText = CCSprite::createWithSpriteFrameName("rankText.png"_spr);
+        // --- data labels
+        CCLabelBMFont* timeLabel = CCLabelBMFont::create("00:00:00", "unleashedHUDFont.fnt"_spr);
+        CCLabelBMFont* attemptsLabel = CCLabelBMFont::create("00000", "unleashedHUDFont.fnt"_spr);
+        CCLabelBMFont* jumpsLabel = CCLabelBMFont::create("00000", "unleashedHUDFont.fnt"_spr);
+        CCLabelBMFont* coinsLabel = CCLabelBMFont::create("0/0", "unleashedHUDFont.fnt"_spr);
     };
 
     void customSetup() {
         EndLevelLayer::customSetup();
 
         auto f = m_fields.self();
-        auto rightBarsColor = ccc3(0x3c, 0x4e, 0x86);
-        auto titleBarsColor = ccc3(0x3E, 0x44, 0x62);
-        auto resultsBarColor = ccc3(0x3B, 0x56, 0x8E);
-        auto totalBarColor = ccc3(0x31, 0x95, 0x80);
-        auto totalTitleColor = ccc3(0x2F, 0xA3, 0x6A);
+        auto fmod = FMODAudioEngine::sharedEngine();
 
-        // general setup for all elements
-        f->timerBar->setColor(rightBarsColor);
-        f->timerBarOverlay->setOpacity(50);
-        f->timerBarNode->setScale(1.15f);
-        f->timerBarNode->setPosition({515.0f + 350, 226.0f});
-        f->timerBarNode->setID("time-bar"_spr);
+        // --------------------------------------------------------
+        // RANKING SPRITE SETUP
+        // --------------------------------------------------------
 
-        f->attemptsBar->setColor(rightBarsColor);
-        f->attemptsBarOverlay->setOpacity(50);
-        f->attemptsBarNode->setScale(1.15f);
-        f->attemptsBarNode->setPosition({515.0f + 350, 196.0f});
-        f->attemptsBarNode->setID("attempts-bar"_spr);
+        int attempts = m_playLayer->m_attempts;
 
-        f->jumpsBar->setColor(rightBarsColor);
-        f->jumpsBarOverlay->setOpacity(50);
-        f->jumpsBarNode->setScale(1.15f);
-        f->jumpsBarNode->setPosition({515.0f + 350, 166.0f});
-        f->jumpsBarNode->setID("jumps-bar"_spr);
+        f->rankingSprite->setOpacity(0);
+        f->rankingSprite->setZOrder(10);
+        f->rankingSprite->setPosition({50, 50});
+        f->rankingSprite->setID("rank-sprite"_spr);
+        f->rankingSprite->setScale(9.0f);
 
-        f->speedBar->setColor(rightBarsColor);
-        f->speedBarOverlay->setOpacity(50);
-        f->speedBarNode->setScale(1.15f);
-        f->speedBarNode->setPosition({515.0f + 350, 136.0f});
-        f->speedBarNode->setID("speed-bar"_spr);
+        bool rankS = attempts == 1;
+        bool rankA = attempts == 2 || attempts == 3;
+        bool rankB = attempts >= 4 && attempts <= 6;
+        bool rankC = attempts >= 7 && attempts <= 10;
+        bool rankD = attempts >= 11 && attempts <= 15;
+        bool rankE = attempts > 16;
 
-        f->resultsBar->setColor(resultsBarColor);
-        f->resultsBarOverlay->setOpacity(90);
-        f->resultsNode->setScale(1.05f);
-        f->resultsNode->setPosition({-235.0f - 300, 278.0f});
-        f->resultsNode->setID("results-bar"_spr);
+        if (rankS) {
+            f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_s.png"_spr));
+            fmod->playEffect("rankS.ogg"_spr);
+        } else if (rankA) {
+            f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_a.png"_spr));
+            fmod->playEffect("rankA.ogg"_spr);
+        } else if (rankB) {
+            f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_b.png"_spr));
+            fmod->playEffect("rankC.ogg"_spr);
+        } else if (rankC) {
+            f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_c.png"_spr));
+            fmod->playEffect("rankC.ogg"_spr);
+        } else if (rankD) {
+            f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_d.png"_spr));
+            fmod->playEffect("rankC.ogg"_spr);
+        } else if (rankE) {
+            f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_e.png"_spr));
+            fmod->playEffect("rankE.ogg"_spr);
+        }
 
-        // title bars setup
-        f->timeTitle->setColor(titleBarsColor);
-        f->timeTitleOverlay->setOpacity(50);
-        f->timeTitleNode->setScale(0.825f);
-        f->timeTitleNode->addChild(f->timeTitle);
-        f->timeTitleNode->addChild(f->timeTitleOverlay);
-        f->timeTitleNode->setID("time-title"_spr);
+        // ----------------
+        // RIGHT SIDE BARS
+        // ----------------
+        f->timerBar->setScale(1.775f);
+        f->timerBar->setPosition({505.0f + 350, 226.0f});
+        f->timerBar->setID("time-bar"_spr);
 
-        f->attemptsTitle->setColor(titleBarsColor);
-        f->attemptsTitleOverlay->setOpacity(50);
-        f->attemptsTitleNode->setScale(0.825f);
-        f->attemptsTitleNode->addChild(f->attemptsTitle);
-        f->attemptsTitleNode->addChild(f->attemptsTitleOverlay);
-        f->attemptsTitleNode->setID("atts-title"_spr);
+        f->attemptsBar->setScale(1.775f);
+        f->attemptsBar->setPosition({505.0f + 350, 196.0f});
+        f->attemptsBar->setID("attempts-bar"_spr);
 
-        f->jumpsTitle->setColor(titleBarsColor);
-        f->jumpsTitleOverlay->setOpacity(50);
-        f->jumpsTitleNode->setScale(0.825f);
-        f->jumpsTitleNode->addChild(f->jumpsTitle);
-        f->jumpsTitleNode->addChild(f->jumpsTitleOverlay);
-        f->jumpsTitleNode->setID("jumps-title"_spr);
+        f->jumpsBar->setScale(1.775f);
+        f->jumpsBar->setPosition({505.0f + 350, 166.0f});
+        f->jumpsBar->setID("jumps-bar"_spr);
 
-        f->speedTitle->setColor(titleBarsColor);
-        f->speedTitleOverlay->setOpacity(50);
-        f->speedTitleNode->setScale(0.825f);
-        f->speedTitleNode->addChild(f->speedTitle);
-        f->speedTitleNode->addChild(f->speedTitleOverlay);
-        f->speedTitleNode->setID("speed-title"_spr);
+        f->coinsBar->setScale(1.775f);
+        f->coinsBar->setPosition({505.0f + 350, 136.0f});
+        f->coinsBar->setID("coins-bar"_spr);
 
-        // ID setting and add them to their nodes
-        f->timerBarNode->addChild(f->timerBar);
-        f->timerBarNode->addChild(f->timerBarOverlay);
-        f->attemptsBarNode->addChild(f->attemptsBar);
-        f->attemptsBarNode->addChild(f->attemptsBarOverlay);
-        f->jumpsBarNode->addChild(f->jumpsBar);
-        f->jumpsBarNode->addChild(f->jumpsBarOverlay);
-        f->speedBarNode->addChild(f->speedBar);
-        f->speedBarNode->addChild(f->speedBarOverlay);
-        f->resultsNode->addChild(f->resultsBar);
-        f->resultsNode->addChild(f->resultsBarOverlay);
+        // ----------------
+        // TOP RESULTS BAR
+        // ----------------
+        f->resultsBar->setScale(1.75f);
+        f->resultsBar->setPosition({26.0f - 300, 279.0f});
+        f->resultsBar->setID("results-bar"_spr);
+
+        // ----------------
+        // TITLE BARS
+        // ----------------
+        f->timeTitle->setScale(1.775f);
+        f->timeTitle->setID("time-title"_spr);
+        f->timeTitle->setPosition({322.0f, 233.0f});
+        // starting pos = 328.0f, 239f
+        // move by - X: -6, Y: -6
+
+        f->attemptsTitle->setScale(1.775f);
+        f->attemptsTitle->setID("atts-title"_spr);
+        f->attemptsTitle->setPosition({322.0f, 203.0f});
+
+        f->jumpsTitle->setScale(1.775f);
+        f->jumpsTitle->setID("jumps-title"_spr);
+        f->jumpsTitle->setPosition({322.0f, 173.0f});
+
+        f->coinsTitle->setScale(1.775f);
+        f->coinsTitle->setID("coins-title"_spr);
+        f->coinsTitle->setPosition({322.0f, 143.0f});
+
+        // ----------------
+        // LOWER TOTAL SECTION
+        // ----------------
+        f->totalTitle->setScale(1.775f);
+        f->totalTitle->setID("total-title"_spr);
+        f->totalTitle->setPosition({321.0f, 84.5f});
+
+        f->totalBar->setScale(1.775f);
+        f->totalBar->setPosition({36.0f - 350, 77.0f});
+
+        // ----------------
+        // DATA LABELS
+        // ----------------
+        auto baselayer = GJBaseGameLayer::get();
+        auto playlayer = PlayLayer::get();
+        float attTime = baselayer->m_gameState.m_levelTime;
+        int mins = static_cast<int>(attTime) / 60;
+        int secs = static_cast<int>(attTime) % 60;
+        int millis = static_cast<int>((attTime - static_cast<int>(attTime)) * 100);
+        std::string levelTimeText = fmt::format("{:02}:{:02}:{:02}", mins, secs, millis);
+        std::string attemptsText = fmt::format("{:03}", playlayer->m_attempts);
+        std::string jumpsText = fmt::format("{:06}", playlayer->m_jumps);
+
+        f->timeLabel->setString(levelTimeText.c_str(), true);
+        f->timeLabel->setID("time-label"_spr);
+        f->timeLabel->setAnchorPoint({1.0f, 0.5f});
+        f->timeLabel->setScaleX(0.77f);
+        f->timeLabel->setScaleY(0.65f);
+        f->timeLabel->setPosition({453.0f, 227.5f});
+        f->timeLabel->setAlignment(kCCTextAlignmentRight);
+
+        f->attemptsLabel->setString(attemptsText.c_str(), true);
+        f->attemptsLabel->setID("attempts-label"_spr);
+        f->attemptsLabel->setAnchorPoint({1.0f, 0.5f});
+        f->attemptsLabel->setPosition({453.0f, 197.5f});
+        f->attemptsLabel->setScaleX(0.77f);
+        f->attemptsLabel->setScaleY(0.65f);
+        f->attemptsLabel->setAlignment(kCCTextAlignmentRight);
         
-        // add elements to main node, add main node to layer
-        f->rankingScreenNode->addChild(f->timerBarNode);
-        f->rankingScreenNode->addChild(f->attemptsBarNode);
-        f->rankingScreenNode->addChild(f->jumpsBarNode);
-        f->rankingScreenNode->addChild(f->speedBarNode);
-        f->rankingScreenNode->addChild(f->resultsNode);
-        f->rankingScreenNode->addChild(f->timeTitleNode);
-        f->rankingScreenNode->addChild(f->attemptsTitleNode);
-        f->rankingScreenNode->addChild(f->jumpsTitleNode);
-        f->rankingScreenNode->addChild(f->speedTitleNode);
+        f->jumpsLabel->setString(jumpsText.c_str(), true);
+        f->jumpsLabel->setID("jumps-label"_spr);
+        f->jumpsLabel->setAnchorPoint({1.0f, 0.5f});
+        f->jumpsLabel->setPosition({453.0f, 167.5f});
+        f->jumpsLabel->setScaleX(0.77f);
+        f->jumpsLabel->setScaleY(0.65f);
+        f->jumpsLabel->setAlignment(kCCTextAlignmentRight);
+
+        // ----------------
+        // LITERALLY JUST THE RANK TEXT
+        // ----------------
+        f->rankText->setPosition({152.0f, 78.5f});
+        f->rankText->setID("rank-text"_spr);
+        f->rankText->setOpacity(0);
+        f->rankText->setAnchorPoint({1.0f, 0.5f});
+        // will scale up to 1.9f
+        
+        // ----------------
+        // ADD TO MAIN NODE
+        // ----------------
+        f->rankingScreenNode->addChild(f->timerBar);
+        f->rankingScreenNode->addChild(f->attemptsBar);
+        f->rankingScreenNode->addChild(f->jumpsBar);
+        f->rankingScreenNode->addChild(f->coinsBar);
+        f->rankingScreenNode->addChild(f->resultsBar);
+        f->rankingScreenNode->addChild(f->timeTitle);
+        f->rankingScreenNode->addChild(f->attemptsTitle);
+        f->rankingScreenNode->addChild(f->jumpsTitle);
+        f->rankingScreenNode->addChild(f->coinsTitle);
+        f->rankingScreenNode->addChild(f->totalBar);
+        f->rankingScreenNode->addChild(f->totalTitle);
+        f->rankingScreenNode->addChild(f->rankText);
+        f->rankingScreenNode->addChild(f->timeLabel);
+        f->rankingScreenNode->addChild(f->attemptsLabel);
+        f->rankingScreenNode->addChild(f->jumpsLabel);
+        f->rankingScreenNode->addChild(f->rankingSprite);
         f->rankingScreenNode->setZOrder(100);
         this->addChild(f->rankingScreenNode);
 
-        // guides
+        // ----------------
+        // GUIDES (REMOVE LATER)
+        // ----------------
         auto imageGuide = CCSprite::createWithSpriteFrameName("imageGuide.png"_spr);
         auto guideTitleStart = CCSprite::createWithSpriteFrameName("guideTitlestart.png"_spr);
         auto winSize = CCDirector::sharedDirector()->getWinSize();
@@ -197,5 +268,25 @@ class $modify(EndLevelLayer) {
         this->addChild(imageGuide);
         this->addChild(guideTitleStart);
 
+    }
+
+    void showLayer(bool p0) {
+        EndLevelLayer::showLayer(p0);
+
+        auto literallyTheEndscreen = this->getChildByID("main-layer");
+        literallyTheEndscreen->stopAllActions();
+        literallyTheEndscreen->setVisible(false);
+
+        // animations
+        auto fadeIn = CCFadeIn::create(0.3f);
+        auto scaleDown = CCScaleTo::create(0.3, 1.75f);
+
+        ranking->runAction(fadeIn);
+        ranking->runAction(scaleDown);
+
+        // -----------------------------------------------
+        // RANKING SCREEN ANIMATIONS
+        // GOD SAVE ME
+        // -----------------------------------------------
     }
 };

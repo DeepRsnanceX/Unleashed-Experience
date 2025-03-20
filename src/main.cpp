@@ -471,76 +471,13 @@ class $modify(PlayLayer) {
         fmod->fadeOutMusic(1.5f, 3);
         fmod->fadeOutMusic(1.5f, 4);
 
+        auto hud = this->getChildByID("UnleashedHUD"_spr);
+        auto movehudoff = CCSequence::create(
+            CCDelayTime::create(1.5f),
+            CCMoveBy::create(0.f, {0, 1000}),
+            nullptr
+        );
+        hud->runAction(movehudoff);
+
     }
-};
-
-class $modify(EndLevelLayer) {
-    void customSetup() {
-        EndLevelLayer::customSetup();
-
-        int attempts = m_playLayer->m_attempts;
-        auto fmod = FMODAudioEngine::sharedEngine();
-
-        auto rankSprite = CCSprite::createWithSpriteFrameName("rank_placeholder.png"_spr);
-        rankSprite->setOpacity(0);
-        rankSprite->setZOrder(10);
-        rankSprite->setPosition({50, 50});
-        rankSprite->setID("rank-sprite"_spr);
-        rankSprite->setScale(9.0f);
-        this->addChild(rankSprite);
-
-        geode::log::debug("attempts: {}", attempts);
-
-        bool rankS = attempts == 1;
-        bool rankA = attempts == 2 || attempts == 3;
-        bool rankB = attempts >= 4 && attempts <= 6;
-        bool rankC = attempts >= 7 && attempts <= 10;
-        bool rankD = attempts >= 11 && attempts <= 15;
-        bool rankE = attempts > 16;
-
-        if (rankS) {
-            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_s.png"_spr));
-            fmod->playEffect("rankS.ogg"_spr);
-        } else if (rankA) {
-            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_a.png"_spr));
-            fmod->playEffect("rankA.ogg"_spr);
-        } else if (rankB) {
-            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_b.png"_spr));
-            fmod->playEffect("rankC.ogg"_spr);
-        } else if (rankC) {
-            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_c.png"_spr));
-            fmod->playEffect("rankC.ogg"_spr);
-        } else if (rankD) {
-            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_d.png"_spr));
-            fmod->playEffect("rankC.ogg"_spr);
-        } else if (rankE) {
-            rankSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_e.png"_spr));
-            fmod->playEffect("rankE.ogg"_spr);
-        }
-
-        // ---------------------------------
-        // UNLEASHED RANKING SCREEN
-        // MAKING THIS IS GONNA BE A PAIN
-        // ---------------------------------
-
-        
-    }
-
-    void showLayer(bool p0) {
-        EndLevelLayer::showLayer(p0);
-
-        auto literallyTheEndscreen = this->getChildByID("main-layer");
-        literallyTheEndscreen->stopAllActions();
-        literallyTheEndscreen->setVisible(false);
-        
-        auto ranking = this->getChildByID("rank-sprite"_spr);
-
-        // animations
-        auto fadeIn = CCFadeIn::create(0.3f);
-        auto scaleDown = CCScaleTo::create(0.3, 1.75f);
-
-        ranking->runAction(fadeIn);
-        ranking->runAction(scaleDown);
-    }
-
 };
