@@ -124,7 +124,7 @@ class $modify(PlayLayer) {
 
         auto hud = this->getChildByID("UnleashedHUD"_spr);
         if (hud) {
-            hud->setPosition({0, 0});
+            hud->setPosition({4, 257});
         }
     }
 };
