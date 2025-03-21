@@ -11,4 +11,11 @@ public:
     void timerCheck3(float dt);
     void timerCheck4(float dt);
     void timerEnd(float dt);
+    // sfx for the ranking screen
+    void slide1(float dt);
+    void slide2(float dt);
+    void slide3(float dt);
+    void rankReaction(float dt);
+    void rankPlacement(float dt);
+    void totalScoreSound(float dt);
 };

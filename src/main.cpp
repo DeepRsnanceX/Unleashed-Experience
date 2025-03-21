@@ -451,19 +451,6 @@ class $modify(PlayLayer) {
         auto fmod = FMODAudioEngine::sharedEngine();
 
         fmod->playEffect("goal_ring.ogg"_spr);
-        int attempts = this->m_attempts;
-
-        int randomBest = genRandomInt(1, 6);
-        int randomGood = genRandomInt(1, 5);
-        int randomBad = genRandomInt(1, 5);
-
-        if (attempts <= 3) {
-            fmod->playEffect(fmt::format("complete_best_{}.ogg"_spr, randomBest));
-        } else if (attempts > 3 && attempts <= 10) {
-            fmod->playEffect(fmt::format("complete_good_{}.ogg"_spr, randomGood));
-        } else {
-            fmod->playEffect(fmt::format("complete_bad_{}.ogg"_spr, randomBad));
-        }
 
         fmod->fadeOutMusic(1.5f, 0);
         fmod->fadeOutMusic(1.5f, 1);
@@ -473,7 +460,7 @@ class $modify(PlayLayer) {
 
         auto hud = this->getChildByID("UnleashedHUD"_spr);
         auto movehudoff = CCSequence::create(
-            CCDelayTime::create(1.5f),
+            CCDelayTime::create(0.76f),
             CCMoveBy::create(0.f, {0, 1000}),
             nullptr
         );
