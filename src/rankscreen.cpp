@@ -79,6 +79,10 @@ class $modify(EndLevelLayer) {
         CCLabelBMFont* attemptsLabel = CCLabelBMFont::create("00000", "unleashedHUDFont.fnt"_spr);
         CCLabelBMFont* jumpsLabel = CCLabelBMFont::create("00000", "unleashedHUDFont.fnt"_spr);
         CCLabelBMFont* coinsLabel = CCLabelBMFont::create("0/0", "unleashedHUDFont.fnt"_spr);
+        // --- top deco arrows
+        CCSprite* topArrow = CCSprite::createWithSpriteFrameName("decoArrow.png"_spr);
+        CCSprite* topArrow2 = CCSprite::createWithSpriteFrameName("decoArrow.png"_spr);
+        CCSprite* topArrow3 = CCSprite::createWithSpriteFrameName("decoArrow.png"_spr);
     };
 
     void customSetup() {
@@ -248,6 +252,9 @@ class $modify(EndLevelLayer) {
         f->rankingScreenNode->addChild(f->attemptsLabel);
         f->rankingScreenNode->addChild(f->jumpsLabel);
         f->rankingScreenNode->addChild(f->rankingSprite);
+        f->rankingScreenNode->addChild(f->topArrow);
+        f->rankingScreenNode->addChild(f->topArrow2);
+        f->rankingScreenNode->addChild(f->topArrow3);
         f->rankingScreenNode->setZOrder(100);
         this->addChild(f->rankingScreenNode);
 
@@ -274,6 +281,7 @@ class $modify(EndLevelLayer) {
         EndLevelLayer::showLayer(p0);
 
         auto literallyTheEndscreen = this->getChildByID("main-layer");
+        auto f = m_fields.self();
         literallyTheEndscreen->stopAllActions();
         literallyTheEndscreen->setVisible(false);
 
@@ -281,8 +289,8 @@ class $modify(EndLevelLayer) {
         auto fadeIn = CCFadeIn::create(0.3f);
         auto scaleDown = CCScaleTo::create(0.3, 1.75f);
 
-        ranking->runAction(fadeIn);
-        ranking->runAction(scaleDown);
+        f->rankingSprite->runAction(fadeIn);
+        f->rankingSprite->runAction(scaleDown);
 
         // -----------------------------------------------
         // RANKING SCREEN ANIMATIONS
