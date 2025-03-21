@@ -99,7 +99,7 @@ class $modify(EndLevelLayer) {
 
         f->rankingSprite->setOpacity(0);
         f->rankingSprite->setZOrder(10);
-        f->rankingSprite->setPosition({50, 50});
+        f->rankingSprite->setPosition({188, 83});
         f->rankingSprite->setID("rank-sprite"_spr);
         f->rankingSprite->setScale(9.0f);
 
@@ -157,25 +157,44 @@ class $modify(EndLevelLayer) {
         f->resultsBar->setID("results-bar"_spr);
 
         // ----------------
+        // DECO ARROWS FOR RESULTS BAR
+        // ----------------
+        f->topArrow->setScale(0.7f);
+        f->topArrow->setPosition({-65.0f, 281.0f});
+        f->topArrow->setID("top-arrow"_spr);
+
+        f->topArrow2->setScale(0.7f);
+        f->topArrow2->setPosition({-65.0f, 281.0f});
+        f->topArrow2->setID("top-arrow2"_spr);
+
+        f->topArrow3->setScale(0.7f);
+        f->topArrow3->setPosition({-65.0f, 281.0f});
+        f->topArrow3->setID("top-arrow3"_spr);
+
+        // ----------------
         // TITLE BARS
         // ----------------
         f->timeTitle->setScale(1.775f);
         f->timeTitle->setID("time-title"_spr);
-        f->timeTitle->setPosition({322.0f, 233.0f});
+        f->timeTitle->setPosition({322.0f + 6, 233.0f + 6});
         // starting pos = 328.0f, 239f
         // move by - X: -6, Y: -6
+        f->timeTitle->setOpacity(0);
 
         f->attemptsTitle->setScale(1.775f);
         f->attemptsTitle->setID("atts-title"_spr);
-        f->attemptsTitle->setPosition({322.0f, 203.0f});
+        f->attemptsTitle->setPosition({322.0f + 6, 203.0f + 6});
+        f->attemptsTitle->setOpacity(0);
 
         f->jumpsTitle->setScale(1.775f);
         f->jumpsTitle->setID("jumps-title"_spr);
-        f->jumpsTitle->setPosition({322.0f, 173.0f});
+        f->jumpsTitle->setPosition({322.0f + 6, 173.0f + 6});
+        f->jumpsTitle->setOpacity(0);
 
         f->coinsTitle->setScale(1.775f);
         f->coinsTitle->setID("coins-title"_spr);
-        f->coinsTitle->setPosition({322.0f, 143.0f});
+        f->coinsTitle->setPosition({322.0f + 6, 143.0f + 6});
+        f->coinsTitle->setOpacity(0);
 
         // ----------------
         // LOWER TOTAL SECTION
@@ -185,7 +204,8 @@ class $modify(EndLevelLayer) {
         f->totalTitle->setPosition({321.0f, 84.5f});
 
         f->totalBar->setScale(1.775f);
-        f->totalBar->setPosition({36.0f - 350, 77.0f});
+        f->totalBar->setPosition({36.0f - 450, 77.0f});
+        f->totalBar->setID("total-bar"_spr);
 
         // ----------------
         // DATA LABELS
@@ -197,7 +217,7 @@ class $modify(EndLevelLayer) {
         int secs = static_cast<int>(attTime) % 60;
         int millis = static_cast<int>((attTime - static_cast<int>(attTime)) * 100);
         std::string levelTimeText = fmt::format("{:02}:{:02}:{:02}", mins, secs, millis);
-        std::string attemptsText = fmt::format("{:03}", playlayer->m_attempts);
+        std::string attemptsText = fmt::format("{:06}", playlayer->m_attempts);
         std::string jumpsText = fmt::format("{:06}", playlayer->m_jumps);
 
         f->timeLabel->setString(levelTimeText.c_str(), true);
