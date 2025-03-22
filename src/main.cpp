@@ -201,6 +201,7 @@ class $modify(PlayLayer) {
         auto lifeUpSprite = CCSprite::createWithSpriteFrameName("1upIcon.png"_spr);
         lifeUpSprite->setOpacity(0);
         lifeUpSprite->setID("life-up-sprite"_spr);
+        lifeUpSprite->setZOrder(100);
         this->addChild(lifeUpSprite);
 
         // hide the sprites
