@@ -18,7 +18,8 @@
 		"files": [
 			"resources/sfx/*.ogg",
 			"resources/fonts/*.png",
-			"resources/fonts/*.fnt"
+			"resources/fonts/*.fnt",
+			"resources/music/*.mp3"
 		]
 	},
 	"settings": {

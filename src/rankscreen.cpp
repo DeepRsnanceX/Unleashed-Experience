@@ -83,6 +83,24 @@ void SonicUnleashed::totalScoreSound(float dt) {
     fmod->playEffect("totalScore.ogg"_spr);
 }
 
+void SonicUnleashed::stageClear(float dt) {
+    auto fmod = FMODAudioEngine::sharedEngine();
+    fmod->playEffect("stageClear.ogg"_spr);
+}
+
+void SonicUnleashed::rankingMusic(float dt) {
+    auto fmod = FMODAudioEngine::sharedEngine();
+    auto playLayer = PlayLayer::get();
+
+    int attempts = playLayer->m_attempts;
+
+    if (attempts >= 16){
+        fmod->playMusic("badRanking.mp3"_spr, true, 0, 1);
+    } else {
+        fmod->playMusic("goodRanking.mp3"_spr, true, 0, 1);
+    }
+}
+
 class $modify(PlayLayer) {
     struct Fields {
         CCSprite* whiteFlashOverlay = CCSprite::createWithSpriteFrameName("white_overlay.png"_spr);
@@ -128,7 +146,7 @@ class $modify(PlayLayer) {
 
 class $modify(EndLevelLayer) {
     struct Fields {
-        CCNode* rankingScreenNode = CCNode::create();
+        CCNodeRGBA* rankingScreenNode = CCNodeRGBA::create();
         // -----------------------
         // RANKING SCREEN ELEMENTS
         // -----------------------
@@ -165,8 +183,10 @@ class $modify(EndLevelLayer) {
         // -----------------------
         // OTHER STUFF
         // -----------------------
-        float extraDelay = 1.0f;
-        int totalScore = 0.f;
+        float extraDelay = 0.9f;
+        float happenFaster = 0.25f;
+        int totalScore = 0;
+        bool isHidden = false;
     };
 
     void customSetup() {
@@ -205,37 +225,31 @@ class $modify(EndLevelLayer) {
             f->afterimageRankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_s.png"_spr));
             f->totalScore = f->totalScore + 100000;
             f->totalScore = f->totalScore + getRandomInt(0, 1000);
-            fmod->playEffect("rankS.ogg"_spr);
         } else if (rankA) {
             f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_a.png"_spr));
             f->afterimageRankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_a.png"_spr));
             f->totalScore = f->totalScore + 50000;
             f->totalScore = f->totalScore + getRandomInt(0, 1000);
-            fmod->playEffect("rankA.ogg"_spr);
         } else if (rankB) {
             f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_b.png"_spr));
             f->afterimageRankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_b.png"_spr));
             f->totalScore = f->totalScore + 25000;
             f->totalScore = f->totalScore + getRandomInt(0, 500);
-            fmod->playEffect("rankC.ogg"_spr);
         } else if (rankC) {
             f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_c.png"_spr));
             f->afterimageRankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_c.png"_spr));
             f->totalScore = f->totalScore + 10000;
             f->totalScore = f->totalScore + getRandomInt(0, 500);
-            fmod->playEffect("rankC.ogg"_spr);
         } else if (rankD) {
             f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_d.png"_spr));
             f->afterimageRankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_d.png"_spr));
             f->totalScore = f->totalScore + 5000;
             f->totalScore = f->totalScore + getRandomInt(0, 250);
-            fmod->playEffect("rankC.ogg"_spr);
         } else if (rankE) {
             f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_e.png"_spr));
             f->afterimageRankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_e.png"_spr));
             f->totalScore = f->totalScore + 1000;
             f->totalScore = f->totalScore + getRandomInt(0, 250);
-            fmod->playEffect("rankE.ogg"_spr);
         }
 
         // ----------------
@@ -413,6 +427,7 @@ class $modify(EndLevelLayer) {
         f->rankingScreenNode->addChild(f->topArrow3);
         f->rankingScreenNode->addChild(f->rankingSprite);
         f->rankingScreenNode->addChild(f->afterimageRankingSprite);
+        f->rankingScreenNode->setCascadeOpacityEnabled(true);
         f->rankingScreenNode->setZOrder(100);
         this->addChild(f->rankingScreenNode);
 
@@ -438,10 +453,26 @@ class $modify(EndLevelLayer) {
 
     }
 
-    void playCoinEffect(float p0) { 
-        EndLevelLayer::playCoinEffect(p0);
-        
-        geode::log::debug("playCoinEffect called with {}", p0);
+    void playCoinEffect(float p0) {
+        // fuck you
+        // *unplays your CoinEffect*
+    }
+
+    void onHideLayer(cocos2d::CCObject* sender) {
+        EndLevelLayer::onHideLayer(sender);
+
+        auto fields = m_fields.self();
+
+        auto hideRankingStuff = CCFadeOut::create(0.5f);
+        auto showRankingStuff = CCFadeIn::create(0.5f);
+
+        if (!fields->isHidden) {
+            fields->rankingScreenNode->runAction(hideRankingStuff);
+        } else {
+            fields->rankingScreenNode->runAction(showRankingStuff);
+        }
+
+        fields->isHidden = !fields->isHidden;
     }
 
     void showLayer(bool p0) {
@@ -668,21 +699,29 @@ class $modify(EndLevelLayer) {
         int attempts = m_playLayer->m_attempts;
         if (attempts > 16) {
             auto shitRankLmao = CCSequence::create(
-                CCDelayTime::create(2.94f + f->extraDelay),
-                CCEaseBackOut::create(CCRotateBy::create(0.95f, 50.0f)),
+                CCDelayTime::create(3.25f + f->extraDelay),
+                CCEaseBounceOut::create(CCRotateBy::create(1.0f, 50.0f)),
+                nullptr
+            );
+            auto lowKeyFellOffBro = CCSequence::create(
+                CCDelayTime::create(3.25f + f->extraDelay),
+                CCEaseBounceOut::create(CCMoveBy::create(0.75f, {0.0f, -20.0f})),
                 nullptr
             );
             f->afterimageRankingSprite->runAction(shitRankLmao);
+            f->afterimageRankingSprite->runAction(lowKeyFellOffBro);
         }
 
-        this->scheduleOnce(schedule_selector(SonicUnleashed::rankReaction), 3.15f + f->extraDelay);
+        this->scheduleOnce(schedule_selector(SonicUnleashed::rankReaction), 3.3f + f->extraDelay);
         this->scheduleOnce(schedule_selector(SonicUnleashed::rankPlacement), 2.94f + f->extraDelay);
         this->scheduleOnce(schedule_selector(SonicUnleashed::totalScoreSound), 1.45f + f->extraDelay);
 
-        this->scheduleOnce(schedule_selector(SonicUnleashed::slide1), 0.59f + f->extraDelay);
-        this->scheduleOnce(schedule_selector(SonicUnleashed::slide2), 0.77f + f->extraDelay);
-        this->scheduleOnce(schedule_selector(SonicUnleashed::slide3), 0.92f + f->extraDelay);
-        
+        this->scheduleOnce(schedule_selector(SonicUnleashed::slide1), 0.59f + f->extraDelay - f->happenFaster);
+        this->scheduleOnce(schedule_selector(SonicUnleashed::slide2), 0.77f + f->extraDelay - f->happenFaster);
+        this->scheduleOnce(schedule_selector(SonicUnleashed::slide3), 0.92f + f->extraDelay - f->happenFaster);
+
+        this->scheduleOnce(schedule_selector(SonicUnleashed::stageClear), f->extraDelay / 2);
+        this->scheduleOnce(schedule_selector(SonicUnleashed::rankingMusic), 5.65f + f->extraDelay);
         
     }
 };

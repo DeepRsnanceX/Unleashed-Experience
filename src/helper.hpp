@@ -18,4 +18,7 @@ public:
     void rankReaction(float dt);
     void rankPlacement(float dt);
     void totalScoreSound(float dt);
+    // music
+    void stageClear(float dt);
+    void rankingMusic(float dt);
 };
