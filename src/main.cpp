@@ -364,6 +364,7 @@ class $modify(PlayLayer) {
         fields->ringEnergyGaugeNode->addChild(fields->attemptsLabel);
         fields->ringEnergyGaugeNode->setCascadeOpacityEnabled(true);
         fields->ringEnergyGaugeNode->setOpacity(energyGaugeOpacity);
+        fields->ringEnergyGaugeNode->setZOrder(100);
 
         fields->ringEnergyGaugeNode->setScale(1.77f);
         fields->ringEnergyGaugeNode->setPosition({163.0f, 37.5f});
