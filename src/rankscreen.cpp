@@ -91,10 +91,12 @@ class $modify(PlayLayer) {
         if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
 
         auto f = m_fields.self();
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
         
         f->whiteFlashOverlay->setZOrder(1000);
-        f->whiteFlashOverlay->setScale(10.0f);
+        f->whiteFlashOverlay->setScale(3.0f);
         f->whiteFlashOverlay->setOpacity(0);
+        f->whiteFlashOverlay->setPosition({winSize.width / 2, winSize.height / 2});
 
         this->addChild(f->whiteFlashOverlay);
 
@@ -108,8 +110,8 @@ class $modify(PlayLayer) {
 
         auto flashbang = CCSequence::create(
             CCFadeIn::create(0.75f),
-            CCDelayTime::create(0.35f),
-            CCFadeOut::create(0.60f),
+            CCDelayTime::create(1.2f),
+            CCFadeOut::create(0.35f),
             nullptr
         );
         f->whiteFlashOverlay->runAction(flashbang);
@@ -168,7 +170,7 @@ class $modify(EndLevelLayer) {
         // -----------------------
         // OTHER STUFF
         // -----------------------
-        float extraDelay = 0.f;
+        float extraDelay = 1.0f;
         int totalScore = 0.f;
     };
 
@@ -439,6 +441,9 @@ class $modify(EndLevelLayer) {
         imageGuide->setVisible(false);
         guideTitleStart->setVisible(false);
 
+        auto coinString = this->getCoinString();
+        geode::log::debug("coin string: {}", coinString);
+
     }
 
     void showLayer(bool p0) {
@@ -448,172 +453,6 @@ class $modify(EndLevelLayer) {
         auto f = m_fields.self();
         literallyTheEndscreen->stopAllActions();
         literallyTheEndscreen->setVisible(false);
-
-        // -----------------------------------------------
-        // RANKING SCREEN ANIMATIONS
-        // GOD SAVE ME
-        // -----------------------------------------------
-
-        /*
-        1. Initial Animation
-Fade‑in to white
-Animation Breakdown:
-  • Fade in: 0.75 s
-  • Hold (stay): 0.35 s
-  • Fade out: 0.60 s
-Total Duration: 1.70 s
-Delay: 0 s (starts immediately)
-Note: The buildup SFX starts 0.2 s after the fade‑in begins.
-2. Timeline Events (Using 43.57 s as Baseline)
-Pre‑Group Events
-Keybind hints show up (immediate)
-
-Timestamp: 43.57 s
-Delay: 43.57 – 43.57 = 0.00 s
-Duration: Immediate
-Results bar movement
-
-Timestamp: 43.64 – 43.92 s
-Delay: 43.64 – 43.57 = 0.07 s
-Duration: 43.92 – 43.64 = 0.28 s
-Deco arrow 1 move
-
-Timestamp: 43.91 – 44.16 s
-Delay: 43.91 – 43.57 = 0.34 s
-Duration: 44.16 – 43.91 = 0.25 s
-Deco arrow 1 fade out
-
-Timestamp: 44.09 – 44.16 s
-Delay: 44.09 – 43.57 = 0.52 s
-Duration: 44.16 – 44.09 = 0.07 s
-Deco arrow 2 move
-
-Timestamp: 43.94 – 44.24 s
-Delay: 43.94 – 43.57 = 0.37 s
-Duration: 44.24 – 43.94 = 0.30 s
-Deco arrow 2 fade out
-
-Timestamp: 44.22 – 44.24 s
-Delay: 44.22 – 43.57 = 0.65 s
-Duration: 44.24 – 44.22 = 0.02 s
-Deco arrow 3 move
-
-Timestamp: 44.12 – 44.49 s
-Delay: 44.12 – 43.57 = 0.55 s
-Duration: 44.49 – 44.12 = 0.37 s
-Deco arrow 3 fade out
-
-Timestamp: 44.42 – 44.49 s
-Delay: 44.42 – 43.57 = 0.85 s
-Duration: 44.49 – 44.42 = 0.07 s
-Animation Group
-Time title fade in & movement
-
-Timestamp: 43.91 – 43.98 s
-Delay: 43.91 – 43.57 = 0.34 s
-Duration: 43.98 – 43.91 = 0.07 s
-Time bar movement
-
-Timestamp: 43.94 – 44.14 s
-Delay: 43.94 – 43.57 = 0.37 s
-Duration: 44.14 – 43.94 = 0.20 s
-Time label appears (immediate)
-
-Timestamp: 44.24 s
-Delay: 44.24 – 43.57 = 0.67 s
-Duration: Immediate
-Atts title fade in & movement
-
-Timestamp: 44.13 – 44.19 s
-Delay: 44.13 – 43.57 = 0.56 s
-Duration: 44.19 – 44.13 = 0.06 s
-Atts bar movement
-
-Timestamp: 44.16 – 44.36 s
-Delay: 44.16 – 43.57 = 0.59 s
-Duration: 44.36 – 44.16 = 0.20 s
-Atts label appears (immediate)
-
-Timestamp: 44.39 s
-Delay: 44.39 – 43.57 = 0.82 s
-Duration: Immediate
-Jumps title fade in & movement
-
-Timestamp: 44.31 – 44.39 s
-Delay: 44.31 – 43.57 = 0.74 s
-Duration: 44.39 – 44.31 = 0.08 s
-Jumps bar movement
-
-Timestamp: 44.34 – 44.56 s
-Delay: 44.34 – 43.57 = 0.77 s
-Duration: 44.56 – 44.34 = 0.22 s
-Jumps label appears (immediate)
-
-Timestamp: 44.56 s
-Delay: 44.56 – 43.57 = 0.99 s
-Duration: Immediate
-Coins title fade in & movement
-
-Timestamp: 44.46 – 44.54 s
-Delay: 44.46 – 43.57 = 0.89 s
-Duration: 44.54 – 44.46 = 0.08 s
-Coins bar movement
-
-Timestamp: 44.49 – 44.71 s
-Delay: 44.49 – 43.57 = 0.92 s
-Duration: 44.71 – 44.49 = 0.22 s
-Coins label appears (immediate)
-
-Timestamp: 44.71 s
-Delay: 44.71 – 43.57 = 1.14 s
-Duration: Immediate
-Subsequent Events
-Total title move & fade in
-
-Timestamp: 44.66 – 44.74 s
-Delay: 44.66 – 43.57 = 1.09 s
-Duration: 44.74 – 44.66 = 0.08 s
-Total bar movement
-
-Timestamp: 44.91 – 45.11 s
-Delay: 44.91 – 43.57 = 1.34 s
-Duration: 45.11 – 44.91 = 0.20 s
-Total label shows up (immediate, plays score reveal SFX)
-
-Timestamp: 45.12 s
-Delay: 45.12 – 43.57 = 1.55 s
-Duration: Immediate
-"Rank" text fade in & scale up
-
-Timestamp: 46.17 – 46.36 s
-Delay: 46.17 – 43.57 = 2.60 s
-Duration: 46.36 – 46.17 = 0.19 s
-Rank sprites scale down
-
-Timestamp: 46.36 – 46.51 s
-Delay: 46.36 – 43.57 = 2.79 s
-Duration: 46.51 – 46.36 = 0.15 s
-Secondary rank sprite fade-in
-
-Timestamp: 46.36 – 46.51 s
-Delay: 46.36 – 43.57 = 2.79 s
-Duration: 46.51 – 46.36 = 0.15 s
-Main rank sprite fade out (immediate)
-
-Timestamp: 46.51 s
-Delay: 46.51 – 43.57 = 2.94 s
-Duration: Immediate
-Rank placement SFX (immediate)
-
-Timestamp: 46.51 s
-Delay: 46.51 – 43.57 = 2.94 s
-Duration: Immediate
-Results music starts playing (immediate)
-
-Timestamp: 49.14 s
-Delay: 49.14 – 43.57 = 5.57 s
-Duration: Immediate
-        */
 
         auto fadeInToWhite = CCFadeIn::create(0.75f);
         auto hold = CCDelayTime::create(0.35f);
@@ -784,7 +623,7 @@ Duration: Immediate
         );
         auto afterimageRankSpriteFadeIn = CCSequence::create(
             CCDelayTime::create(2.79f + f->extraDelay),
-            CCFadeIn::create(0.15f),
+            CCFadeIn::create(0.1f),
             nullptr
         );
         auto rankSpriteFadeOut = CCSequence::create(
@@ -827,6 +666,16 @@ Duration: Immediate
         f->afterimageRankingSprite->runAction(afterimageRankSpriteScaleDown);
         f->afterimageRankingSprite->runAction(afterimageRankSpriteFadeIn);
         f->rankingSprite->runAction(rankSpriteFadeOut);
+
+        int attempts = m_playLayer->m_attempts;
+        if (attempts > 16) {
+            auto shitRankLmao = CCSequence::create(
+                CCDelayTime::create(2.94f + f->extraDelay),
+                CCEaseBackOut::create(CCRotateBy::create(0.95f, 50.0f)),
+                nullptr
+            );
+            f->afterimageRankingSprite->runAction(shitRankLmao);
+        }
 
         this->scheduleOnce(schedule_selector(SonicUnleashed::rankReaction), 3.15f + f->extraDelay);
         this->scheduleOnce(schedule_selector(SonicUnleashed::rankPlacement), 2.94f + f->extraDelay);
