@@ -21,7 +21,6 @@ int genRandomInt(int min, int max) {
 
     return distr(gen);
 }
-
 // ------------------------------------
 // FETCH SETTINGS AND STUFF
 // ------------------------------------
@@ -72,6 +71,48 @@ class $modify(PlayerObject){
             }
         }
 
+        // do the uhh thing
+        auto playLayer = PlayLayer::get();
+
+        if (playLayer) {
+            int jumps = playLayer->m_jumps;
+            auto lifeSprite = playLayer->getChildByID("life-up-sprite"_spr);
+            if (jumps % 100 == 0) {
+                auto winSize = CCDirector::sharedDirector()->getWinSize();
+                auto winSizeWidth = winSize.width;
+                auto winSizeHeight = winSize.height;
+
+                auto midWidth = winSizeWidth / 2;
+                auto midHeight = winSizeHeight / 2;
+
+                lifeSprite->setPosition({midWidth, midHeight - 70.0f});
+                lifeSprite->setScaleY(0.2f);
+                lifeSprite->setScaleX(0.f);
+
+                auto immediateFadeIn = CCFadeIn::create(0.f);
+                auto moveToPos = CCEaseIn::create(CCMoveTo::create(0.9f, {winSizeWidth / 2, 260.0f}), 2.5f);
+
+                fmod->playEffect("lifeAdded.ogg"_spr);
+                lifeSprite->runAction(immediateFadeIn);
+                lifeSprite->runAction(moveToPos);
+
+                auto helpme = CCSequence::create(
+                    CCEaseOut::create(CCScaleTo::create(0.25f, -0.3f, 0.3f), 2.0f),
+                    CCDelayTime::create(0.05f),
+                    CCEaseIn::create(CCScaleTo::create(0.45f, 0.6f, 0.6f), 2.0f),
+                    nullptr
+                );
+
+                auto fadeOut = CCSequence::create(
+                    CCDelayTime::create(2.5f),
+                    CCFadeOut::create(0.0f),
+                    nullptr
+                );
+
+                lifeSprite->runAction(helpme);
+                lifeSprite->runAction(fadeOut);
+            }
+        }
     }
 
     void updateTimeMod(float p0, bool p1) {
@@ -157,6 +198,12 @@ class $modify(PlayLayer) {
         auto goBackSprite = CCSprite::createWithSpriteFrameName("go_backsprite.png"_spr);
         auto goMainSprite = CCSprite::createWithSpriteFrameName("go_mainsprite.png"_spr);
 
+        auto lifeUpSprite = CCSprite::createWithSpriteFrameName("1upIcon.png"_spr);
+        lifeUpSprite->setOpacity(0);
+        lifeUpSprite->setID("life-up-sprite"_spr);
+        this->addChild(lifeUpSprite);
+
+        // hide the sprites
         goBackSprite->setOpacity(0);
         goMainSprite->setOpacity(0);
 

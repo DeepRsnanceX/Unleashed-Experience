@@ -184,7 +184,7 @@ class $modify(EndLevelLayer) {
         // OTHER STUFF
         // -----------------------
         float extraDelay = 0.9f;
-        float happenFaster = 0.25f;
+        float happenFaster = 0.1f;
         int totalScore = 0;
         bool isHidden = false;
     };
@@ -699,13 +699,13 @@ class $modify(EndLevelLayer) {
         int attempts = m_playLayer->m_attempts;
         if (attempts > 16) {
             auto shitRankLmao = CCSequence::create(
-                CCDelayTime::create(3.25f + f->extraDelay),
-                CCEaseBounceOut::create(CCRotateBy::create(1.0f, 50.0f)),
+                CCDelayTime::create(3.45f + f->extraDelay),
+                CCEaseBounceOut::create(CCRotateBy::create(1.0f, 35.0f)),
                 nullptr
             );
             auto lowKeyFellOffBro = CCSequence::create(
-                CCDelayTime::create(3.25f + f->extraDelay),
-                CCEaseBounceOut::create(CCMoveBy::create(0.75f, {0.0f, -20.0f})),
+                CCDelayTime::create(3.5f + f->extraDelay),
+                CCEaseBounceOut::create(CCMoveBy::create(0.75f, {0.0f, -15.0f})),
                 nullptr
             );
             f->afterimageRankingSprite->runAction(shitRankLmao);
@@ -714,7 +714,7 @@ class $modify(EndLevelLayer) {
 
         this->scheduleOnce(schedule_selector(SonicUnleashed::rankReaction), 3.3f + f->extraDelay);
         this->scheduleOnce(schedule_selector(SonicUnleashed::rankPlacement), 2.94f + f->extraDelay);
-        this->scheduleOnce(schedule_selector(SonicUnleashed::totalScoreSound), 1.45f + f->extraDelay);
+        this->scheduleOnce(schedule_selector(SonicUnleashed::totalScoreSound), 1.4f + f->extraDelay);
 
         this->scheduleOnce(schedule_selector(SonicUnleashed::slide1), 0.59f + f->extraDelay - f->happenFaster);
         this->scheduleOnce(schedule_selector(SonicUnleashed::slide2), 0.77f + f->extraDelay - f->happenFaster);
