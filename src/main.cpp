@@ -22,6 +22,18 @@ int genRandomInt(int min, int max) {
     return distr(gen);
 }
 
+// ------------------------------------
+// FETCH SETTINGS AND STUFF
+// ------------------------------------
+
+auto energyGaugeOpacity = Mod::get()->getSettingValue<int64_t>("ringenergy-opacity");
+
+$on_mod(Loaded) {
+    listenForSettingChanges("ringenergy-opacity", [](int value) {
+        energyGaugeOpacity = value;
+    });
+}
+
 class $modify(PlayerObject){
 
     void startDashing(DashRingObject* p0) {
@@ -202,6 +214,7 @@ class $modify(PlayLayer) {
 
         fields->jumpsBarNode->addChild(fields->jumpsBar);
         fields->jumpsBarNode->addChild(fields->jumpsBarOverlay);
+        fields->jumpsBarNode->setCascadeOpacityEnabled(true);
 
         // time bar smaller
         fields->timeBarSmall->setID("time-bar-small-main"_spr);
@@ -221,6 +234,7 @@ class $modify(PlayLayer) {
         fields->timeBarSmallNode->addChild(fields->timeBarSmall);
         fields->timeBarSmallNode->addChild(fields->timeBarSmallOverlay);
         fields->timeBarSmallNode->addChild(fields->timeTitle);
+        fields->timeBarSmallNode->setCascadeOpacityEnabled(true);
 
         // attempts bar smaller
         fields->jumpsBarSmall->setID("jumps-bar-small-main"_spr);
@@ -240,6 +254,7 @@ class $modify(PlayLayer) {
         fields->jumpsBarSmallNode->addChild(fields->jumpsBarSmall);
         fields->jumpsBarSmallNode->addChild(fields->jumpsBarSmallOverlay);
         fields->jumpsBarSmallNode->addChild(fields->jumpsTitle);
+        fields->jumpsBarSmallNode->setCascadeOpacityEnabled(true);
 
         // lives icon
         fields->livesIcon->setID("lives-icon"_spr);
@@ -300,6 +315,8 @@ class $modify(PlayLayer) {
         fields->ringEnergyGaugeNode->addChild(fields->energyProgress90);
         fields->ringEnergyGaugeNode->addChild(fields->energyProgress100);
         fields->ringEnergyGaugeNode->addChild(fields->attemptsLabel);
+        fields->ringEnergyGaugeNode->setCascadeOpacityEnabled(true);
+        fields->ringEnergyGaugeNode->setOpacity(energyGaugeOpacity);
 
         fields->ringEnergyGaugeNode->setScale(1.77f);
         fields->ringEnergyGaugeNode->setPosition({163.0f, 37.5f});
@@ -318,6 +335,15 @@ class $modify(PlayLayer) {
         this->addChild(fields->ringEnergyGaugeNode);
 
         return true;
+    }
+
+    void resetLevel() {
+        PlayLayer::resetLevel();
+
+        auto fields = m_fields.self();
+
+        fields->UnleashedHUD->setOpacity(255);
+        fields->ringEnergyGaugeNode->setOpacity(energyGaugeOpacity);
     }
 
     void updateProgressbar() {
@@ -441,8 +467,10 @@ class $modify(PlayLayer) {
         fmod->fadeOutMusic(2.5f, 3);
         fmod->fadeOutMusic(2.5f, 4);
 
-        auto movehudoff = CCFadeOut::create(0.5f);
-        fields->UnleashedHUD->runAction(movehudoff);
+        auto fadeOutHud = CCFadeOut::create(0.5f);
+        auto fadeOutRingGauge = CCFadeOut::create(0.5f);
+        fields->UnleashedHUD->runAction(fadeOutHud);
+        fields->ringEnergyGaugeNode->runAction(fadeOutRingGauge);
 
     }
 };

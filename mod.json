@@ -21,6 +21,25 @@
 			"resources/fonts/*.fnt"
 		]
 	},
+	"settings": {
+		"hud-title":{
+			"type": "title",
+			"name": "HUD",
+			"description": "In-game HUD settings."
+		},
+		"ringenergy-opacity": {
+			"type": "int",
+			"name": "Ring Energy Opacity",
+			"description": "Sets the opacity of the Ring Energy Gauge at the lower left of the screen.",
+			"default": 255,
+			"min": 0,
+			"max": 255,
+			"control": {
+				"slider": true,
+				"slider-step": 1
+			}
+		}
+	},
 	"id": "saritahhh.unleashed_experience",
 	"name": "Unleashed Experience",
 	"version": "v1.0.0",

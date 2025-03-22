@@ -123,11 +123,6 @@ class $modify(PlayLayer) {
         auto f = m_fields.self();
 
         f->whiteFlashOverlay->setOpacity(0);
-
-        auto hud = this->getChildByID("UnleashedHUD"_spr);
-        if (hud) {
-            hud->setPosition({4, 257});
-        }
     }
 };
 
@@ -441,9 +436,12 @@ class $modify(EndLevelLayer) {
         imageGuide->setVisible(false);
         guideTitleStart->setVisible(false);
 
-        auto coinString = this->getCoinString();
-        geode::log::debug("coin string: {}", coinString);
+    }
 
+    void playCoinEffect(float p0) { 
+        EndLevelLayer::playCoinEffect(p0);
+        
+        geode::log::debug("playCoinEffect called with {}", p0);
     }
 
     void showLayer(bool p0) {
