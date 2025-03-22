@@ -435,21 +435,14 @@ class $modify(EndLevelLayer) {
         // GUIDES (REMOVE LATER)
         // ----------------
         auto imageGuide = CCSprite::createWithSpriteFrameName("imageGuide.png"_spr);
-        auto guideTitleStart = CCSprite::createWithSpriteFrameName("guideTitlestart.png"_spr);
         auto winSize = CCDirector::sharedDirector()->getWinSize();
         imageGuide->setPosition({winSize.width / 2, winSize.height / 2});
         imageGuide->setZOrder(-10);
         imageGuide->setScale(1.78);
         imageGuide->setID("guide-main"_spr);
-        guideTitleStart->setPosition({winSize.width / 2, winSize.height / 2});
-        guideTitleStart->setZOrder(-11);
-        guideTitleStart->setID("guide-tstart"_spr);
-        guideTitleStart->setScale(1.78);
         this->addChild(imageGuide);
-        this->addChild(guideTitleStart);
 
         imageGuide->setVisible(false);
-        guideTitleStart->setVisible(false);
 
     }
 
