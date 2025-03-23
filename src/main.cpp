@@ -9,9 +9,6 @@
 
 using namespace geode::prelude;
 
-bool unleashedSounds = true;
-bool unleashedRankings = true;
-
 float playerSpeedMain = 0.f;
 
 int genRandomInt(int min, int max) {
@@ -400,7 +397,7 @@ class $modify(PlayLayer) {
     
         auto baseLayer = GJBaseGameLayer::get();
         auto fields = m_fields.self();
-        float currentTime = baseLayer->m_gameState.m_levelTime;
+        float currentTime = baseLayer->m_gameState.m_totalTime;
     
         int minutes = static_cast<int>(currentTime) / 60;
         int seconds = static_cast<int>(currentTime) % 60;

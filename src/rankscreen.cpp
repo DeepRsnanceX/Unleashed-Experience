@@ -1,5 +1,6 @@
 #include <Geode/modify/PlayLayer.hpp>
 #include <Geode/modify/EndLevelLayer.hpp>
+#include <Geode/modify/GJBaseGameLayer.hpp>
 #include <Geode/binding/GJGameLevel.hpp>
 #include <Geode/binding/GJBaseGameLayer.hpp>
 #include <Geode/loader/SettingV3.hpp>
@@ -7,6 +8,9 @@
 #include <random>
 
 using namespace geode::prelude;
+
+int maxCoins = 0;
+int collectedCoinsManual = 0;
 
 int getRandomInt(int min, int max) {
     std::random_device rd;  // Obtain a random number from hardware
@@ -101,6 +105,20 @@ void SonicUnleashed::rankingMusic(float dt) {
     }
 }
 
+class $modify(GJBaseGameLayer) {
+	void pickupItem(EffectGameObject *p0) {
+
+        if (p0->m_objectID == 1329) {
+            collectedCoinsManual++;
+        }
+        if (p0->m_objectID == 142) {
+            collectedCoinsManual = collectedCoinsManual + 1;
+        }
+
+        GJBaseGameLayer::pickupItem(p0);
+    }
+};
+
 class $modify(PlayLayer) {
     struct Fields {
         CCSprite* whiteFlashOverlay = CCSprite::createWithSpriteFrameName("white_overlay.png"_spr);
@@ -117,6 +135,8 @@ class $modify(PlayLayer) {
         f->whiteFlashOverlay->setPosition({winSize.width / 2, winSize.height / 2});
 
         this->addChild(f->whiteFlashOverlay);
+
+        maxCoins = level->m_coins;
 
         return true;
     }
@@ -141,6 +161,7 @@ class $modify(PlayLayer) {
         auto f = m_fields.self();
 
         f->whiteFlashOverlay->setOpacity(0);
+        collectedCoinsManual = 0;
     }
 };
 
@@ -369,7 +390,8 @@ class $modify(EndLevelLayer) {
         f->jumpsLabel->setAlignment(kCCTextAlignmentRight);
         f->jumpsLabel->setOpacity(0);
 
-        f->coinsLabel->setString("0/0", true);
+        std::string coinsText = fmt::format("{}/{}", collectedCoinsManual, maxCoins);
+        f->coinsLabel->setString(coinsText.c_str(), true);
         f->coinsLabel->setID("coins-label"_spr);
         f->coinsLabel->setAnchorPoint({1.0f, 0.5f});
         f->coinsLabel->setPosition({453.0f, 137.5f});
