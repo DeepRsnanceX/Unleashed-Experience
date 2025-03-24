@@ -355,7 +355,7 @@ class $modify(EndLevelLayer) {
         // DATA LABELS
         // ----------------
         auto baselayer = GJBaseGameLayer::get();
-        float attTime = baselayer->m_gameState.m_levelTime;
+        float attTime = baselayer->m_gameState.m_totalTime;
         int mins = static_cast<int>(attTime) / 60;
         int secs = static_cast<int>(attTime) % 60;
         int millis = static_cast<int>((attTime - static_cast<int>(attTime)) * 100);
