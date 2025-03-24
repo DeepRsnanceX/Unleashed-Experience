@@ -108,11 +108,16 @@ void SonicUnleashed::rankingMusic(float dt) {
 class $modify(GJBaseGameLayer) {
 	void pickupItem(EffectGameObject *p0) {
 
+        auto fmod = FMODAudioEngine::sharedEngine();
+
         if (p0->m_objectID == 1329) {
             collectedCoinsManual++;
+            fmod->playEffect("medal.ogg"_spr);
+
         }
         if (p0->m_objectID == 142) {
             collectedCoinsManual = collectedCoinsManual + 1;
+            fmod->playEffect("medal.ogg"_spr);
         }
 
         GJBaseGameLayer::pickupItem(p0);

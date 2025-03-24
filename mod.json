@@ -39,6 +39,71 @@
 				"slider": true,
 				"slider-step": 1
 			}
+		},
+		"hud-opacity": {
+			"type": "int",
+			"name": "HUD Opacity",
+			"description": "Sets the opacity of the other HUD elements.",
+			"default": 255,
+			"min": 0,
+			"max": 255,
+			"control": {
+				"slider": true,
+				"slider-step": 1
+			}
+		},
+		"sfx-title":{
+			"type": "title",
+			"name": "Sound Effects",
+			"description": "Settings for gameplay sound-related features in the mod."
+		},
+		"jumpsfx-cube": {
+			"type": "bool",
+			"name": "Jump SFX (Cube)",
+			"description": "Use the Unleashed jump voicelines when jumping as the cube.",
+			"default": true
+		},
+		"jumpsfx-robot": {
+			"type": "bool",
+			"name": "Jump SFX (Robot)",
+			"description": "Use the Unleashed jump voicelines when jumping as the robot.",
+			"default": true
+		},
+		"boostvoice-dash": {
+			"type": "bool",
+			"name": "Boost voicelines (Dash Orb)",
+			"description": "Use the Unleashed boost voicelines when using the Dash Orb.",
+			"default": true
+		},
+		"boostvoice-speed": {
+			"type": "bool",
+			"name": "Boost SFX (Max Speed)",
+			"description": "Use the Unleashed boost voicelines when Max Speed (4x) is triggered.",
+			"default": true
+		},
+		"boostfx-speed": {
+			"type": "bool",
+			"name": "Boost SFX (Max Speed)",
+			"description": "Use the Unleashed boost SFX when Max Speed (4x) is triggered.",
+			"default": true
+		},
+		"rankscreen-title":{
+			"type": "title",
+			"name": "Rank Screen",
+			"description": "Settings for the Ranking Screen."
+		},
+		"stage-clear": {
+			"type": "bool",
+			"name": "Stage Clear Effects",
+			"description": "Plays the Sonic Unleashed stage clear SFX when completing a level. \n\n Enabling this will cause the level's music to forcefully fade out every time, so that the SFX and music (if enabled) don't overlap with the level music.",
+			"default": true
+		},
+		"results-music": {
+			"type": "bool",
+			"name": "Results Screen Music",
+			"description": "Plays the Sonic Unleashed results screen music when viewing the results screen.",
+			"enable-if": "stage-clear",
+			"default": true
 		}
 	},
 	"id": "saritahhh.unleashed_experience",
