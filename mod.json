@@ -25,8 +25,8 @@
 	"settings": {
 		"hud-title":{
 			"type": "title",
-			"name": "HUD",
-			"description": "In-game HUD settings."
+			"name": "Gameplay",
+			"description": "Settings for gameplay-related features in the mod."
 		},
 		"ringenergy-opacity": {
 			"type": "int",
@@ -51,6 +51,12 @@
 				"slider": true,
 				"slider-step": 1
 			}
+		},
+		"life-up": {
+			"type": "bool",
+			"name": "1-up Effect",
+			"description": "Plays the 1-up animation and sound from Unleashed when reaching 100 jumps in the current attempt.",
+			"default": true
 		},
 		"sfx-title":{
 			"type": "title",
@@ -87,10 +93,29 @@
 			"description": "Use the Unleashed boost SFX when Max Speed (4x) is triggered.",
 			"default": true
 		},
+		"boostjet-sfx": {
+			"type": "bool",
+			"name": "Boost Jet SFX",
+			"description": "Use the Unleashed jet-like SFX alongside the boost SFX (only applies for Max Speed).",
+			"default": false
+		},
+		"coin-sfx": {
+			"type": "string",
+			"name": "Coin SFX",
+			"description": "Select the SFX to play when collecting a coin.",
+			"default": "medal",
+			"one-of": ["medal", "superring", "off"]
+		},
 		"rankscreen-title":{
 			"type": "title",
 			"name": "Rank Screen",
 			"description": "Settings for the Ranking Screen."
+		},
+		"disable-increated": {
+			"type": "bool",
+			"name": "Disable in Created Levels",
+			"description": "Disables the rank screen in your own created levels.",
+			"default": false
 		},
 		"stage-clear": {
 			"type": "bool",

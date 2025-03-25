@@ -23,10 +23,14 @@ int genRandomInt(int min, int max) {
 // ------------------------------------
 
 auto energyGaugeOpacity = Mod::get()->getSettingValue<int64_t>("ringenergy-opacity");
+auto hudOpacity = Mod::get()->getSettingValue<int64_t>("hud-opacity");
 
 $on_mod(Loaded) {
     listenForSettingChanges("ringenergy-opacity", [](int value) {
         energyGaugeOpacity = value;
+    });
+    listenForSettingChanges("hud-opacity", [](int value) {
+        hudOpacity = value;
     });
 }
 
@@ -126,6 +130,7 @@ class $modify(PlayerObject){
 
             if (p0 >= 1.5f) {
                 fmod->playEffect("boost_fullsfx.ogg"_spr);
+                fmod->playEffect("boostJet.ogg"_spr);
                 if (doPlaySound >= 3) {
                     fmod->playEffect(sfxToPlayBoost);
                 }

@@ -222,6 +222,15 @@ class $modify(EndLevelLayer) {
         auto fmod = FMODAudioEngine::sharedEngine();
 
         // --------------------------------------------------------
+        // CLICKABLE KEYBIND HINTS SETUP
+        // --------------------------------------------------------
+
+        auto base = GJBaseGameLayer::get();
+        auto myLevel = base->m_level;
+
+        geode::log::debug("is editable: {}", myLevel->m_isEditable);
+
+        // --------------------------------------------------------
         // RANKING SPRITE SETUP
         // --------------------------------------------------------
 
