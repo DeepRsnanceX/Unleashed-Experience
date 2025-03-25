@@ -5,6 +5,14 @@
 
 using namespace geode::prelude;
 
+auto doMeterSFX = Mod::get()->getSettingValue<bool>("speedmeter-sfx");
+
+$on_mod(Loaded) {
+    listenForSettingChanges("speedmeter-sfx", [](bool value) {
+        doMeterSFX = value;
+    });
+}
+
 float playerSpeed = 0.f;
 
 void SonicUnleashed::timerCheck(float dt){
@@ -364,8 +372,10 @@ class $modify(PlayLayer) {
                         meterCounterGlow3->runAction(scaleGlowAnim1);
                         meterCounterGlow3->runAction(fadeOutGlow1);
                         speedMeterCounter3->runAction(showMeter1);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 1.53f);
+                        if (doMeterSFX) {
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 1.53f);
+                        }
 
                     } else if (playerSpeed == 1.1f) {
                         // 2x speed, show only 2 counters
@@ -374,13 +384,16 @@ class $modify(PlayLayer) {
                         meterCounterGlow3->runAction(scaleGlowAnim1);
                         meterCounterGlow3->runAction(fadeOutGlow1);
                         speedMeterCounter3->runAction(showMeter1);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
 
                         meterCounterGlow2->runAction(scaleGlowAnim2);
                         meterCounterGlow2->runAction(fadeOutGlow2);
                         speedMeterCounter2->runAction(showMeter2);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 1.83f);
+
+                        if (doMeterSFX) {
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 1.83f);
+                        }
 
                     } else if (playerSpeed == 1.3f) {
                         // 3x speed, show only 3 counters
@@ -389,18 +402,21 @@ class $modify(PlayLayer) {
                         meterCounterGlow3->runAction(scaleGlowAnim1);
                         meterCounterGlow3->runAction(fadeOutGlow1);
                         speedMeterCounter3->runAction(showMeter1);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
 
                         meterCounterGlow2->runAction(scaleGlowAnim2);
                         meterCounterGlow2->runAction(fadeOutGlow2);
                         speedMeterCounter2->runAction(showMeter2);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
 
                         meterCounterGlow1->runAction(scaleGlowAnim3);
                         meterCounterGlow1->runAction(fadeOutGlow3);
                         speedMeterCounter1->runAction(showMeter3);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck3), 1.98f);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 2.13f);
+
+                        if (doMeterSFX) {
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck3), 1.98f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 2.13f);
+                        }
 
                     } else if (playerSpeed == 1.6f) {
                         // 4x speed, show all 4 counters
@@ -409,23 +425,26 @@ class $modify(PlayLayer) {
                         meterCounterGlow3->runAction(scaleGlowAnim1);
                         meterCounterGlow3->runAction(fadeOutGlow1);
                         speedMeterCounter3->runAction(showMeter1);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
 
                         meterCounterGlow2->runAction(scaleGlowAnim2);
                         meterCounterGlow2->runAction(fadeOutGlow2);
                         speedMeterCounter2->runAction(showMeter2);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
 
                         meterCounterGlow1->runAction(scaleGlowAnim3);
                         meterCounterGlow1->runAction(fadeOutGlow3);
                         speedMeterCounter1->runAction(showMeter3);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck3), 1.98f);
 
                         meterCounterGlow0->runAction(scaleGlowAnim4);
                         meterCounterGlow0->runAction(fadeOutGlow4);
                         speedMeterCounter0->runAction(showMeter4);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck4), 2.28f);
-                        this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 2.43f);
+
+                        if (doMeterSFX) {
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck3), 1.98f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck4), 2.28f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 2.43f);
+                        }
                     }
 
                     // run slide off anim

@@ -12,6 +12,66 @@ using namespace geode::prelude;
 int maxCoins = 0;
 int collectedCoinsManual = 0;
 
+// ------------------------------------
+// FETCH SETTINGS AND STUFF
+// ------------------------------------
+
+auto energyGaugeOpacity = Mod::get()->getSettingValue<int64_t>("ringenergy-opacity");
+auto hudOpacity = Mod::get()->getSettingValue<int64_t>("hud-opacity");
+auto doLifeUp = Mod::get()->getSettingValue<bool>("life-up");
+auto doJumpSFXCube = Mod::get()->getSettingValue<bool>("jumpsfx-cube");
+auto doJumpSFXRobot = Mod::get()->getSettingValue<bool>("jumpsfx-robot");
+auto doBoostVoiceDash = Mod::get()->getSettingValue<bool>("boostvoice-dash");
+auto doBoostVoiceSpeed = Mod::get()->getSettingValue<bool>("boostvoice-speed");
+auto doBoostSFXSpeed = Mod::get()->getSettingValue<bool>("boostfx-speed");
+auto doBoostJetSFX = Mod::get()->getSettingValue<bool>("boostjet-sfx");
+auto coinSFX = Mod::get()->getSettingValue<std::string>("coin-sfx");
+auto disableRankInCreated = Mod::get()->getSettingValue<bool>("disable-increated");
+auto doStageClear = Mod::get()->getSettingValue<bool>("stage-clear");
+auto doResultsMusic = Mod::get()->getSettingValue<bool>("results-music");
+
+$on_mod(Loaded) {
+    listenForSettingChanges("ringenergy-opacity", [](int value) {
+        energyGaugeOpacity = value;
+    });
+    listenForSettingChanges("hud-opacity", [](int value) {
+        hudOpacity = value;
+    });
+    listenForSettingChanges("life-up", [](bool value) {
+        doLifeUp = value;
+    });
+    listenForSettingChanges("jumpsfx-cube", [](bool value) {
+        doJumpSFXCube = value;
+    });
+    listenForSettingChanges("jumpsfx-robot", [](bool value) {
+        doJumpSFXRobot = value;
+    });
+    listenForSettingChanges("boostvoice-dash", [](bool value) {
+        doBoostVoiceDash = value;
+    });
+    listenForSettingChanges("boostvoice-speed", [](bool value) {
+        doBoostVoiceSpeed = value;
+    });
+    listenForSettingChanges("boostfx-speed", [](bool value) {
+        doBoostSFXSpeed = value;
+    });
+    listenForSettingChanges("boostjet-sfx", [](bool value) {
+        doBoostJetSFX = value;
+    });
+    listenForSettingChanges("coin-sfx", [](std::string value) {
+        coinSFX = value;
+    });
+    listenForSettingChanges("disable-increated", [](bool value) {
+        disableRankInCreated = value;
+    });
+    listenForSettingChanges("stage-clear", [](bool value) {
+        doStageClear = value;
+    });
+    listenForSettingChanges("results-music", [](bool value) {
+        doResultsMusic = value;
+    });
+}
+
 int getRandomInt(int min, int max) {
     std::random_device rd;  // Obtain a random number from hardware
     std::mt19937 gen(rd()); // Seed the generator

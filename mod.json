@@ -99,6 +99,12 @@
 			"description": "Use the Unleashed jet-like SFX alongside the boost SFX (only applies for Max Speed).",
 			"default": false
 		},
+		"speedmeter-sfx": {
+			"type": "bool",
+			"name": "Speed Meter SFX",
+			"description": "Play the Unleashed Speed Meter sound effects when the Speed Meter shows up.",
+			"default": true
+		},
 		"coin-sfx": {
 			"type": "string",
 			"name": "Coin SFX",
