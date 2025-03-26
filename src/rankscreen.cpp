@@ -603,7 +603,7 @@ class $modify(EndLevelLayer) {
             fields->menu->runAction(hideKeybindHints);
         } else {
             fields->rankingScreenNode->runAction(showRankingStuff);
-            fields->menu->runAction(hideKeybindHints);
+            fields->menu->runAction(showKeybindHints);
         }
 
         fields->isHidden = !fields->isHidden;
