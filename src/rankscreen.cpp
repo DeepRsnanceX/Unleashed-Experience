@@ -563,19 +563,6 @@ class $modify(EndLevelLayer) {
         f->rankingScreenNode->setZOrder(100);
         this->addChild(f->rankingScreenNode);
 
-        // ----------------
-        // GUIDES (REMOVE LATER)
-        // ----------------
-        auto imageGuide = CCSprite::createWithSpriteFrameName("imageGuide.png"_spr);
-        auto winSize = CCDirector::sharedDirector()->getWinSize();
-        imageGuide->setPosition({winSize.width / 2, winSize.height / 2});
-        imageGuide->setZOrder(-10);
-        imageGuide->setScale(1.78);
-        imageGuide->setID("guide-main"_spr);
-        this->addChild(imageGuide);
-
-        imageGuide->setVisible(false);
-
     }
 
     void playCoinEffect(float p0) {
