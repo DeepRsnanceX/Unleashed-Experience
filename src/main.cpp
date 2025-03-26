@@ -77,7 +77,7 @@ class $modify(PlayerObject){
 
         auto fmod = FMODAudioEngine::sharedEngine();
 
-        int randomBoost = genRandomInt(1, 7);
+        int randomBoost = genRandomInt(1, 5);
         auto sfxToPlayBoost = fmt::format("boost_{}.ogg"_spr, randomBoost);
 
         // Generate another random int to decide whether to play the sound
