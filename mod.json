@@ -105,23 +105,36 @@
 			"description": "Play the Unleashed Speed Meter sound effects when the Speed Meter shows up.",
 			"default": true
 		},
-		"coin-sfx": {
+		"usercoin-sfx": {
 			"type": "string",
-			"name": "Coin SFX",
+			"name": "User Coin SFX",
+			"description": "Select the SFX to play when collecting a coin.",
+			"default": "medal",
+			"one-of": ["medal", "superring", "off"]
+		},
+		"secretcoin-sfx": {
+			"type": "string",
+			"name": "Secret Coin SFX",
 			"description": "Select the SFX to play when collecting a coin.",
 			"default": "medal",
 			"one-of": ["medal", "superring", "off"]
 		},
 		"rankscreen-title":{
 			"type": "title",
-			"name": "Rank Screen",
-			"description": "Settings for the Ranking Screen."
+			"name": "Results Screen",
+			"description": "Settings for the custom Ranking/Results Screen."
 		},
 		"disable-increated": {
 			"type": "bool",
 			"name": "Disable in Created Levels",
-			"description": "Disables the rank screen in your own created levels.",
+			"description": "Disables the results screen in your own created levels.",
 			"default": false
+		},
+		"enable-flashbang": {
+			"type": "bool",
+			"name": "Enable White Flash",
+			"description": "Enables the white flash effect Unleashed shows to transition from the gameplay to the results screen.",
+			"default": true
 		},
 		"stage-clear": {
 			"type": "bool",

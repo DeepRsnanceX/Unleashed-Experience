@@ -25,10 +25,12 @@ auto doBoostVoiceDash = Mod::get()->getSettingValue<bool>("boostvoice-dash");
 auto doBoostVoiceSpeed = Mod::get()->getSettingValue<bool>("boostvoice-speed");
 auto doBoostSFXSpeed = Mod::get()->getSettingValue<bool>("boostfx-speed");
 auto doBoostJetSFX = Mod::get()->getSettingValue<bool>("boostjet-sfx");
-auto coinSFX = Mod::get()->getSettingValue<std::string>("coin-sfx");
+auto userCoinSFX = Mod::get()->getSettingValue<std::string>("usercoin-sfx");
+auto secretCoinSFX = Mod::get()->getSettingValue<std::string>("secretcoin-sfx");
 auto disableRankInCreated = Mod::get()->getSettingValue<bool>("disable-increated");
 auto doStageClear = Mod::get()->getSettingValue<bool>("stage-clear");
 auto doResultsMusic = Mod::get()->getSettingValue<bool>("results-music");
+auto doWhiteFlash = Mod::get()->getSettingValue<bool>("enable-flashbang");
 
 $on_mod(Loaded) {
     listenForSettingChanges("ringenergy-opacity", [](int value) {
@@ -58,8 +60,11 @@ $on_mod(Loaded) {
     listenForSettingChanges("boostjet-sfx", [](bool value) {
         doBoostJetSFX = value;
     });
-    listenForSettingChanges("coin-sfx", [](std::string value) {
-        coinSFX = value;
+    listenForSettingChanges("usercoin-sfx", [](std::string value) {
+        userCoinSFX = value;
+    });
+    listenForSettingChanges("secretcoin-sfx", [](std::string value) {
+        secretCoinSFX = value;
     });
     listenForSettingChanges("disable-increated", [](bool value) {
         disableRankInCreated = value;
@@ -69,6 +74,9 @@ $on_mod(Loaded) {
     });
     listenForSettingChanges("results-music", [](bool value) {
         doResultsMusic = value;
+    });
+    listenForSettingChanges("enable-flashbang", [](bool value) {
+        doWhiteFlash = value;
     });
 }
 
@@ -169,15 +177,17 @@ class $modify(GJBaseGameLayer) {
 	void pickupItem(EffectGameObject *p0) {
 
         auto fmod = FMODAudioEngine::sharedEngine();
+        std::string userCoinSound = fmt::format("{}.ogg"_spr, coinSFX);
+        std::string secretCoinSound = fmt::format("{}.ogg"_spr, secretCoinSFX);
 
         if (p0->m_objectID == 1329) {
             collectedCoinsManual++;
-            fmod->playEffect("medal.ogg"_spr);
+            fmod->playEffect(userCoinSound.c_str());
 
         }
         if (p0->m_objectID == 142) {
             collectedCoinsManual = collectedCoinsManual + 1;
-            fmod->playEffect("medal.ogg"_spr);
+            fmod->playEffect(secretCoinSound.c_str());
         }
 
         GJBaseGameLayer::pickupItem(p0);
@@ -217,7 +227,10 @@ class $modify(PlayLayer) {
             CCFadeOut::create(0.35f),
             nullptr
         );
-        f->whiteFlashOverlay->runAction(flashbang);
+
+        if (doWhiteFlash) {
+            f->whiteFlashOverlay->runAction(flashbang);
+        }
     }
 
     void resetLevel() {
@@ -225,7 +238,10 @@ class $modify(PlayLayer) {
 
         auto f = m_fields.self();
 
-        f->whiteFlashOverlay->setOpacity(0);
+        if (doWhiteFlash) {
+            f->whiteFlashOverlay->setOpacity(0);
+        }
+
         collectedCoinsManual = 0;
     }
 };
@@ -280,15 +296,15 @@ class $modify(EndLevelLayer) {
 
         auto f = m_fields.self();
         auto fmod = FMODAudioEngine::sharedEngine();
+        auto baselayer = GJBaseGameLayer::get();
+        auto thisLevel = baselayer->m_level;
+
+        if (thisLevel->m_isEditable && disableRankInCreated) return;
 
         // --------------------------------------------------------
         // CLICKABLE KEYBIND HINTS SETUP
         // --------------------------------------------------------
 
-        auto base = GJBaseGameLayer::get();
-        auto myLevel = base->m_level;
-
-        geode::log::debug("is editable: {}", myLevel->m_isEditable);
 
         // --------------------------------------------------------
         // RANKING SPRITE SETUP
@@ -428,7 +444,6 @@ class $modify(EndLevelLayer) {
         // ----------------
         // DATA LABELS
         // ----------------
-        auto baselayer = GJBaseGameLayer::get();
         float attTime = baselayer->m_gameState.m_totalTime;
         int mins = static_cast<int>(attTime) / 60;
         int secs = static_cast<int>(attTime) % 60;
@@ -554,6 +569,10 @@ class $modify(EndLevelLayer) {
 
         auto hideRankingStuff = CCFadeOut::create(0.5f);
         auto showRankingStuff = CCFadeIn::create(0.5f);
+        auto baselayer = GJBaseGameLayer::get();
+        auto thisLevel = baselayer->m_level;
+
+        if (thisLevel->m_isEditable && disableRankInCreated) return;
 
         if (!fields->isHidden) {
             fields->rankingScreenNode->runAction(hideRankingStuff);
@@ -566,6 +585,11 @@ class $modify(EndLevelLayer) {
 
     void showLayer(bool p0) {
         EndLevelLayer::showLayer(p0);
+
+        auto baselayer = GJBaseGameLayer::get();
+        auto thisLevel = baselayer->m_level;
+
+        if (thisLevel->m_isEditable && disableRankInCreated) return;
 
         auto literallyTheEndscreen = this->getChildByID("main-layer");
         auto f = m_fields.self();
