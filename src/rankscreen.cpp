@@ -249,6 +249,7 @@ class $modify(EndLevelLayer) {
         // -----------------------
         // OTHER STUFF
         // -----------------------
+        CCMenu* menu = CCMenu::create();
         float extraDelay = 0.9f;
         float happenFaster = 0.1f;
         int totalScore = 0;
@@ -269,6 +270,59 @@ class $modify(EndLevelLayer) {
         // CLICKABLE KEYBIND HINTS SETUP
         // --------------------------------------------------------
 
+        // menu for the keybinds
+        f->menu = CCMenu::create();
+        f->menu->setLayout(
+            RowLayout::create()
+                ->setGap(27.f)
+                ->setAxisAlignment(AxisAlignment::End)
+                ->setAxisReverse(true)
+                ->setCrossAxisOverflow(false)
+        );
+        f->menu->setPosition({260.f, 35.f});
+        f->menu->setContentSize({550.f, 40.f});
+        f->menu->setScale(0.65f)
+        f->menu->setZOrder(10);
+        this->addChild(f->menu);
+
+        // sprites and buttons
+        auto replayHint = CCSprite::createWithSpriteFrameName("hint_replay.png"_spr);
+        auto replayBtn = CCMenuItemSpriteExtra::create(
+            replayHint,
+            this,
+            menu_selector(EndLevelLayer::onReplay)
+        );
+
+        auto exitHint = CCSprite::createWithSpriteFrameName("hint_exit.png"_spr);
+        auto exitBtn = CCMenuItemSpriteExtra::create(
+            exitHint,
+            this,
+            menu_selector(EndLevelLayer::onMenu)
+        );
+
+        auto editHint = CCSprite::createWithSpriteFrameName("hint_edit.png"_spr);
+        auto editBtn = CCMenuItemSpriteExtra::create(
+            editHint,
+            this,
+            menu_selector(EndLevelLayer::onEdit)
+        );
+
+        auto lastCheckpointHint = CCSprite::createWithSpriteFrameName("hint_lastCheckpoint.png"_spr);
+        auto lastCheckpointBtn = CCMenuItemSpriteExtra::create(
+            lastCheckpointHint,
+            this,
+            menu_selector(EndLevelLayer::onRestartCheckpoint)
+        );
+
+        f->menu->addChild(replayBtn);
+        f->menu->addChild(exitBtn);
+
+        if (baselayer->m_isPracticeMode) {
+            f->menu->addChild(lastCheckpointBtn);
+        }
+        if (thisLevel->m_isEditable) {
+            f->menu->addChild(editBtn);
+        }
 
         // --------------------------------------------------------
         // RANKING SPRITE SETUP
