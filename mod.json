@@ -71,7 +71,7 @@
 		},
 		"boostvoice-speed": {
 			"type": "bool",
-			"name": "Boost SFX (Max Speed)",
+			"name": "Boost voicelines (Max Speed)",
 			"description": "Use the Unleashed boost voicelines when Max Speed (4x) is triggered.",
 			"default": true
 		},
