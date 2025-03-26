@@ -16,50 +16,14 @@ int collectedCoinsManual = 0;
 // FETCH SETTINGS AND STUFF
 // ------------------------------------
 
-auto energyGaugeOpacity = Mod::get()->getSettingValue<int64_t>("ringenergy-opacity");
-auto hudOpacity = Mod::get()->getSettingValue<int64_t>("hud-opacity");
-auto doLifeUp = Mod::get()->getSettingValue<bool>("life-up");
-auto doJumpSFXCube = Mod::get()->getSettingValue<bool>("jumpsfx-cube");
-auto doJumpSFXRobot = Mod::get()->getSettingValue<bool>("jumpsfx-robot");
-auto doBoostVoiceDash = Mod::get()->getSettingValue<bool>("boostvoice-dash");
-auto doBoostVoiceSpeed = Mod::get()->getSettingValue<bool>("boostvoice-speed");
-auto doBoostSFXSpeed = Mod::get()->getSettingValue<bool>("boostfx-speed");
-auto doBoostJetSFX = Mod::get()->getSettingValue<bool>("boostjet-sfx");
 auto userCoinSFX = Mod::get()->getSettingValue<std::string>("usercoin-sfx");
 auto secretCoinSFX = Mod::get()->getSettingValue<std::string>("secretcoin-sfx");
 auto disableRankInCreated = Mod::get()->getSettingValue<bool>("disable-increated");
-auto doStageClear = Mod::get()->getSettingValue<bool>("stage-clear");
+auto stageClearDo = Mod::get()->getSettingValue<bool>("stage-clear");
 auto doResultsMusic = Mod::get()->getSettingValue<bool>("results-music");
 auto doWhiteFlash = Mod::get()->getSettingValue<bool>("enable-flashbang");
 
 $on_mod(Loaded) {
-    listenForSettingChanges("ringenergy-opacity", [](int value) {
-        energyGaugeOpacity = value;
-    });
-    listenForSettingChanges("hud-opacity", [](int value) {
-        hudOpacity = value;
-    });
-    listenForSettingChanges("life-up", [](bool value) {
-        doLifeUp = value;
-    });
-    listenForSettingChanges("jumpsfx-cube", [](bool value) {
-        doJumpSFXCube = value;
-    });
-    listenForSettingChanges("jumpsfx-robot", [](bool value) {
-        doJumpSFXRobot = value;
-    });
-    listenForSettingChanges("boostvoice-dash", [](bool value) {
-        doBoostVoiceDash = value;
-    });
-    listenForSettingChanges("boostvoice-speed", [](bool value) {
-        doBoostVoiceSpeed = value;
-    });
-    listenForSettingChanges("boostfx-speed", [](bool value) {
-        doBoostSFXSpeed = value;
-    });
-    listenForSettingChanges("boostjet-sfx", [](bool value) {
-        doBoostJetSFX = value;
-    });
     listenForSettingChanges("usercoin-sfx", [](std::string value) {
         userCoinSFX = value;
     });
@@ -70,7 +34,7 @@ $on_mod(Loaded) {
         disableRankInCreated = value;
     });
     listenForSettingChanges("stage-clear", [](bool value) {
-        doStageClear = value;
+        stageClearDo = value;
     });
     listenForSettingChanges("results-music", [](bool value) {
         doResultsMusic = value;
@@ -177,7 +141,7 @@ class $modify(GJBaseGameLayer) {
 	void pickupItem(EffectGameObject *p0) {
 
         auto fmod = FMODAudioEngine::sharedEngine();
-        std::string userCoinSound = fmt::format("{}.ogg"_spr, coinSFX);
+        std::string userCoinSound = fmt::format("{}.ogg"_spr, userCoinSFX);
         std::string secretCoinSound = fmt::format("{}.ogg"_spr, secretCoinSFX);
 
         if (p0->m_objectID == 1329) {
@@ -833,8 +797,12 @@ class $modify(EndLevelLayer) {
         this->scheduleOnce(schedule_selector(SonicUnleashed::slide2), 0.77f + f->extraDelay);
         this->scheduleOnce(schedule_selector(SonicUnleashed::slide3), 0.92f + f->extraDelay);
 
-        this->scheduleOnce(schedule_selector(SonicUnleashed::stageClear), f->extraDelay / 2);
-        this->scheduleOnce(schedule_selector(SonicUnleashed::rankingMusic), 5.65f + f->extraDelay);
+        if (stageClearDo) {
+            this->scheduleOnce(schedule_selector(SonicUnleashed::stageClear), f->extraDelay / 2);
+            if (doResultsMusic) {
+                this->scheduleOnce(schedule_selector(SonicUnleashed::rankingMusic), 5.65f + f->extraDelay);
+            }
+        }
         
     }
 };

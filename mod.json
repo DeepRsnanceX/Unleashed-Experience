@@ -40,18 +40,6 @@
 				"slider-step": 1
 			}
 		},
-		"hud-opacity": {
-			"type": "int",
-			"name": "HUD Opacity",
-			"description": "Sets the opacity of the other HUD elements.",
-			"default": 255,
-			"min": 0,
-			"max": 255,
-			"control": {
-				"slider": true,
-				"slider-step": 1
-			}
-		},
 		"life-up": {
 			"type": "bool",
 			"name": "1-up Effect",
@@ -103,6 +91,18 @@
 			"type": "bool",
 			"name": "Speed Meter SFX",
 			"description": "Play the Unleashed Speed Meter sound effects when the Speed Meter shows up.",
+			"default": true
+		},
+		"fake-checkpoint": {
+			"type": "bool",
+			"name": "Fake Checkpoint SFX",
+			"description": "Play the Sonic Checkpoint sound effects when reaching the percentages the Speed Meter shows up at (20, 50 & 80), for accuracy.",
+			"default": true
+		},
+		"goalring-sfx": {
+			"type": "bool",
+			"name": "Goal Ring SFX",
+			"description": "Play the Unleashed Goal Ring sound effects when completing a level.",
 			"default": true
 		},
 		"usercoin-sfx": {

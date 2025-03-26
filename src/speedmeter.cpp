@@ -5,11 +5,15 @@
 
 using namespace geode::prelude;
 
-auto doMeterSFX = Mod::get()->getSettingValue<bool>("speedmeter-sfx");
+auto playMeterSFX = Mod::get()->getSettingValue<bool>("speedmeter-sfx");
+auto fakeCheckpoint = Mod::get()->getSettingValue<bool>("fake-checkpoint");
 
 $on_mod(Loaded) {
     listenForSettingChanges("speedmeter-sfx", [](bool value) {
-        doMeterSFX = value;
+        playMeterSFX = value;
+    });
+    listenForSettingChanges("fake-checkpoint", [](bool value) {
+        fakeCheckpoint = value;
     });
 }
 
@@ -369,10 +373,14 @@ class $modify(PlayLayer) {
                         // 0.5x & 1x speed, show only 1 counter
                         // fields->meterOffDelay = 2.33f;
 
+                        if (fakeCheckpoint) {
+                            fmod->playEffect("triggerCheckpoint.ogg"_spr);
+                        }
+
                         meterCounterGlow3->runAction(scaleGlowAnim1);
                         meterCounterGlow3->runAction(fadeOutGlow1);
                         speedMeterCounter3->runAction(showMeter1);
-                        if (doMeterSFX) {
+                        if (playMeterSFX) {
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 1.53f);
                         }
@@ -380,6 +388,10 @@ class $modify(PlayLayer) {
                     } else if (playerSpeed == 1.1f) {
                         // 2x speed, show only 2 counters
                         // fields->meterOffDelay = 2.63f;
+
+                        if (fakeCheckpoint) {
+                            fmod->playEffect("triggerCheckpoint.ogg"_spr);
+                        }
 
                         meterCounterGlow3->runAction(scaleGlowAnim1);
                         meterCounterGlow3->runAction(fadeOutGlow1);
@@ -389,7 +401,7 @@ class $modify(PlayLayer) {
                         meterCounterGlow2->runAction(fadeOutGlow2);
                         speedMeterCounter2->runAction(showMeter2);
 
-                        if (doMeterSFX) {
+                        if (playMeterSFX) {
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 1.83f);
@@ -398,6 +410,10 @@ class $modify(PlayLayer) {
                     } else if (playerSpeed == 1.3f) {
                         // 3x speed, show only 3 counters
                         // fields->meterOffDelay = 2.93f;
+
+                        if (fakeCheckpoint) {
+                            fmod->playEffect("triggerCheckpoint.ogg"_spr);
+                        }
 
                         meterCounterGlow3->runAction(scaleGlowAnim1);
                         meterCounterGlow3->runAction(fadeOutGlow1);
@@ -411,7 +427,7 @@ class $modify(PlayLayer) {
                         meterCounterGlow1->runAction(fadeOutGlow3);
                         speedMeterCounter1->runAction(showMeter3);
 
-                        if (doMeterSFX) {
+                        if (playMeterSFX) {
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck3), 1.98f);
@@ -421,6 +437,10 @@ class $modify(PlayLayer) {
                     } else if (playerSpeed == 1.6f) {
                         // 4x speed, show all 4 counters
                         // fields->meterOffDelay = 3.23f;
+
+                        if (fakeCheckpoint) {
+                            fmod->playEffect("triggerCheckpoint.ogg"_spr);
+                        }
 
                         meterCounterGlow3->runAction(scaleGlowAnim1);
                         meterCounterGlow3->runAction(fadeOutGlow1);
@@ -438,7 +458,7 @@ class $modify(PlayLayer) {
                         meterCounterGlow0->runAction(fadeOutGlow4);
                         speedMeterCounter0->runAction(showMeter4);
 
-                        if (doMeterSFX) {
+                        if (playMeterSFX) {
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck3), 1.98f);

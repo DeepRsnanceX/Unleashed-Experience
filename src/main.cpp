@@ -31,10 +31,8 @@ auto doBoostVoiceDash = Mod::get()->getSettingValue<bool>("boostvoice-dash");
 auto doBoostVoiceSpeed = Mod::get()->getSettingValue<bool>("boostvoice-speed");
 auto doBoostSFXSpeed = Mod::get()->getSettingValue<bool>("boostfx-speed");
 auto doBoostJetSFX = Mod::get()->getSettingValue<bool>("boostjet-sfx");
-auto coinSFX = Mod::get()->getSettingValue<std::string>("coin-sfx");
-auto disableRankInCreated = Mod::get()->getSettingValue<bool>("disable-increated");
+auto doGoalRingSFX = Mod::get()->getSettingValue<bool>("goalring-sfx");
 auto doStageClear = Mod::get()->getSettingValue<bool>("stage-clear");
-auto doResultsMusic = Mod::get()->getSettingValue<bool>("results-music");
 
 $on_mod(Loaded) {
     listenForSettingChanges("ringenergy-opacity", [](int value) {
@@ -64,17 +62,11 @@ $on_mod(Loaded) {
     listenForSettingChanges("boostjet-sfx", [](bool value) {
         doBoostJetSFX = value;
     });
-    listenForSettingChanges("coin-sfx", [](std::string value) {
-        coinSFX = value;
-    });
-    listenForSettingChanges("disable-increated", [](bool value) {
-        disableRankInCreated = value;
+    listenForSettingChanges("goalring-sfx", [](bool value) {
+        doGoalRingSFX = value;
     });
     listenForSettingChanges("stage-clear", [](bool value) {
         doStageClear = value;
-    });
-    listenForSettingChanges("results-music", [](bool value) {
-        doResultsMusic = value;
     });
 }
 
@@ -91,7 +83,7 @@ class $modify(PlayerObject){
         // Generate another random int to decide whether to play the sound
         int playSound = genRandomInt(1, 10);
 
-        if (playSound > 7) {
+        if (playSound > 7 && doBoostVoiceDash) {
             fmod->playEffect(sfxToPlayBoost);
         }
 
@@ -110,16 +102,22 @@ class $modify(PlayerObject){
         // Generate another random int to decide whether to play the sound
         int playSound = genRandomInt(1, 10);
 
+        bool canPlayInCube = m_isCube && doJumpSFXCube;
+        bool canPlayInRobot = m_isRobot && doJumpSFXRobot;
+        bool canPlaySound = canPlayInCube || canPlayInRobot;
+
         if (playSound > 5) {
-            if (m_isRobot || m_isCube && !m_ringJumpRelated && PlayLayer::get()) {
-                fmod->playEffect(sfxToPlayRandomJump);
+            if (PlayLayer::get()) {
+                if (canPlaySound && !m_ringJumpRelated) {
+                    fmod->playEffect(sfxToPlayRandomJump);
+                }
             }
         }
 
         // do the uhh thing
         auto playLayer = PlayLayer::get();
 
-        if (playLayer) {
+        if (playLayer && doLifeUp) {
             int jumps = playLayer->m_jumps;
             auto lifeSprite = playLayer->getChildByID("life-up-sprite"_spr);
             if (jumps % 100 == 0) {
@@ -173,9 +171,13 @@ class $modify(PlayerObject){
             int doPlaySound = genRandomInt(1, 10);
 
             if (p0 >= 1.5f) {
-                fmod->playEffect("boost_fullsfx.ogg"_spr);
-                fmod->playEffect("boostJet.ogg"_spr);
-                if (doPlaySound >= 3) {
+                if (doBoostSFXSpeed) {
+                    fmod->playEffect("boost_fullsfx.ogg"_spr);
+                }
+                if (doBoostJetSFX) {
+                    fmod->playEffect("boostJet.ogg"_spr);
+                }
+                if (doPlaySound >= 3 && doBoostVoiceSpeed) {
                     fmod->playEffect(sfxToPlayBoost);
                 }
             }
@@ -554,13 +556,17 @@ class $modify(PlayLayer) {
         auto fmod = FMODAudioEngine::sharedEngine();
         auto fields = m_fields.self();
 
-        fmod->playEffect("goal_ring.ogg"_spr);
+        if (doGoalRingSFX) {
+            fmod->playEffect("goal_ring.ogg"_spr);
+        }
 
-        fmod->fadeOutMusic(2.5f, 0);
-        fmod->fadeOutMusic(2.5f, 1);
-        fmod->fadeOutMusic(2.5f, 2);
-        fmod->fadeOutMusic(2.5f, 3);
-        fmod->fadeOutMusic(2.5f, 4);
+        if (doStageClear) {
+            fmod->fadeOutMusic(2.5f, 0);
+            fmod->fadeOutMusic(2.5f, 1);
+            fmod->fadeOutMusic(2.5f, 2);
+            fmod->fadeOutMusic(2.5f, 3);
+            fmod->fadeOutMusic(2.5f, 4);
+        }
 
         auto fadeOutHud = CCFadeOut::create(0.5f);
         auto fadeOutRingGauge = CCFadeOut::create(0.5f);
