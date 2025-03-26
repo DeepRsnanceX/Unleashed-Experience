@@ -2,6 +2,7 @@
 #include <Geode/modify/EndLevelLayer.hpp>
 #include <Geode/modify/GJBaseGameLayer.hpp>
 #include <Geode/binding/GJGameLevel.hpp>
+#include <Geode/binding/EndLevelLayer.hpp>
 #include <Geode/binding/GJBaseGameLayer.hpp>
 #include <Geode/loader/SettingV3.hpp>
 #include "helper.hpp"
