@@ -281,7 +281,7 @@ class $modify(EndLevelLayer) {
         );
         f->menu->setPosition({260.f, 35.f});
         f->menu->setContentSize({550.f, 40.f});
-        f->menu->setScale(0.65f)
+        f->menu->setScale(0.65f);
         f->menu->setZOrder(10);
         this->addChild(f->menu);
 
@@ -323,6 +323,9 @@ class $modify(EndLevelLayer) {
         if (thisLevel->m_isEditable) {
             f->menu->addChild(editBtn);
         }
+
+        f->menu->updateLayout();
+        f->menu->setOpacity(0);
 
         // --------------------------------------------------------
         // RANKING SPRITE SETUP
@@ -590,12 +593,17 @@ class $modify(EndLevelLayer) {
         auto baselayer = GJBaseGameLayer::get();
         auto thisLevel = baselayer->m_level;
 
+        auto hideKeybindHints = CCFadeOut::create(0.5f);
+        auto showKeybindHints = CCFadeIn::create(0.5f);
+
         if (thisLevel->m_isEditable && disableRankInCreated) return;
 
         if (!fields->isHidden) {
             fields->rankingScreenNode->runAction(hideRankingStuff);
+            fields->menu->runAction(hideKeybindHints);
         } else {
             fields->rankingScreenNode->runAction(showRankingStuff);
+            fields->menu->runAction(hideKeybindHints);
         }
 
         fields->isHidden = !fields->isHidden;
@@ -826,6 +834,8 @@ class $modify(EndLevelLayer) {
         f->afterimageRankingSprite->runAction(afterimageRankSpriteScaleDown);
         f->afterimageRankingSprite->runAction(afterimageRankSpriteFadeIn);
         f->rankingSprite->runAction(rankSpriteFadeOut);
+
+        f->menu->runAction(showKeybinds);
 
         int attempts = m_playLayer->m_attempts;
         if (attempts > 16) {

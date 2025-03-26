@@ -198,6 +198,9 @@ class $modify(PlayLayer) {
     void updateProgressbar() {
         PlayLayer::updateProgressbar();
 
+        auto baseLayer = GJBaseGameLayer::get();
+        if (baseLayer->m_isPlatformer) return;
+
         int currentProgress = this->getCurrentPercentInt();
         bool validPercent = currentProgress == 20 || currentProgress == 50 || currentProgress == 80;
         auto fields = m_fields.self();
