@@ -89,6 +89,10 @@ class $modify(PlayLayer) {
         auto meterCounter2 = CCSprite::createWithSpriteFrameName("speed_counter-hq.png"_spr);
         auto meterCounter3 = CCSprite::createWithSpriteFrameName("speed_counter-hq.png"_spr);
 
+        // tint the meter under, color is #B7AFF7
+        auto meterUnderColor = ccc3(183, 175, 247);
+        meterUnder->setColor(meterUnderColor);
+
         auto meterGlow0 = CCSprite::createWithSpriteFrameName("counter-glow.png"_spr);
         auto meterGlow1 = CCSprite::createWithSpriteFrameName("counter-glow.png"_spr);
         auto meterGlow2 = CCSprite::createWithSpriteFrameName("counter-glow.png"_spr);
@@ -126,7 +130,7 @@ class $modify(PlayLayer) {
         meterBack3->setID("speed-meter-back3"_spr);
 
         // positions and scales
-        meterUnder->setPosition({508, 153});
+        meterUnder->setPosition({585, 153});
         meterUnder->setScale(0.8f);
         meterSpd->setPosition({495 + 5, 161});
         meterSpd->setScale(1.1f);
