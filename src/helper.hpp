@@ -21,4 +21,6 @@ public:
     // music
     void stageClear(float dt);
     void rankingMusic(float dt);
+    // misc
+    void cooldownLifeUp(float dt);
 };

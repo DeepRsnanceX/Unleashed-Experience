@@ -10,6 +10,7 @@
 using namespace geode::prelude;
 
 float playerSpeedMain = 0.f;
+bool canPlayAnim = true;
 
 int genRandomInt(int min, int max) {
     std::random_device rd;  // Obtain a random number from hardware
@@ -17,6 +18,11 @@ int genRandomInt(int min, int max) {
     std::uniform_int_distribution<> distr(min, max); // Define the range
 
     return distr(gen);
+}
+void SonicUnleashed::cooldownLifeUp(float dt) {
+    bool canPlayAnim = true;
+
+    geode::log::debug("cooldownLifeUp called, canPlayAnim: {}", canPlayAnim);
 }
 // ------------------------------------
 // FETCH SETTINGS AND STUFF
@@ -121,39 +127,47 @@ class $modify(PlayerObject){
             int jumps = playLayer->m_jumps;
             auto lifeSprite = playLayer->getChildByID("life-up-sprite"_spr);
             if (jumps % 100 == 0) {
-                auto winSize = CCDirector::sharedDirector()->getWinSize();
-                auto winSizeWidth = winSize.width;
-                auto winSizeHeight = winSize.height;
 
-                auto midWidth = winSizeWidth / 2;
-                auto midHeight = winSizeHeight / 2;
+                if (canPlayAnim) {
 
-                lifeSprite->setPosition({midWidth, midHeight - 70.0f});
-                lifeSprite->setScaleY(0.2f);
-                lifeSprite->setScaleX(0.f);
+                    canPlayAnim = false;
 
-                auto immediateFadeIn = CCFadeIn::create(0.f);
-                auto moveToPos = CCEaseIn::create(CCMoveTo::create(0.9f, {winSizeWidth / 2, 260.0f}), 2.5f);
+                    geode::log::debug("playing animation rn, canPlayAnim: {}", canPlayAnim);
 
-                fmod->playEffect("lifeAdded.ogg"_spr);
-                lifeSprite->runAction(immediateFadeIn);
-                lifeSprite->runAction(moveToPos);
+                    auto winSize = CCDirector::sharedDirector()->getWinSize();
+                    auto winSizeWidth = winSize.width;
+                    auto winSizeHeight = winSize.height;
 
-                auto helpme = CCSequence::create(
-                    CCEaseOut::create(CCScaleTo::create(0.25f, -0.3f, 0.3f), 2.0f),
-                    CCDelayTime::create(0.05f),
-                    CCEaseIn::create(CCScaleTo::create(0.45f, 0.6f, 0.6f), 2.0f),
-                    nullptr
-                );
+                    auto midWidth = winSizeWidth / 2;
+                    auto midHeight = winSizeHeight / 2;
 
-                auto fadeOut = CCSequence::create(
-                    CCDelayTime::create(2.5f),
-                    CCFadeOut::create(0.0f),
-                    nullptr
-                );
+                    lifeSprite->setPosition({midWidth, midHeight - 70.0f});
+                    lifeSprite->setScaleY(0.2f);
+                    lifeSprite->setScaleX(0.f);
 
-                lifeSprite->runAction(helpme);
-                lifeSprite->runAction(fadeOut);
+                    auto immediateFadeIn = CCFadeIn::create(0.f);
+                    auto moveToPos = CCEaseIn::create(CCMoveTo::create(0.9f, {winSizeWidth / 2, 260.0f}), 2.5f);
+
+                    auto helpme = CCSequence::create(
+                        CCEaseOut::create(CCScaleTo::create(0.25f, -0.3f, 0.3f), 2.0f),
+                        CCDelayTime::create(0.05f),
+                        CCEaseIn::create(CCScaleTo::create(0.45f, 0.6f, 0.6f), 2.0f),
+                        nullptr
+                    );
+
+                    auto fadeOut = CCSequence::create(
+                        CCDelayTime::create(2.5f),
+                        CCFadeOut::create(0.0f),
+                        nullptr
+                    );
+
+                    fmod->playEffect("lifeAdded.ogg"_spr);
+                    lifeSprite->runAction(immediateFadeIn);
+                    lifeSprite->runAction(moveToPos);
+                    lifeSprite->runAction(helpme);
+                    lifeSprite->runAction(fadeOut);
+                    this->scheduleOnce(schedule_selector(SonicUnleashed::cooldownLifeUp), 3.0f);
+                }
             }
         }
     }
@@ -237,6 +251,9 @@ class $modify(PlayLayer) {
 
     bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
         if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
+
+        canPlayAnim = true;
+        geode::log::debug("PlayLayer::init called, canPlayAnim: {}", canPlayAnim);
 
         auto fmod = FMODAudioEngine::sharedEngine();
         auto fields = m_fields.self();

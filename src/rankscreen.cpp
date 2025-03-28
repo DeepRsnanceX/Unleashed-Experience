@@ -172,6 +172,7 @@ class $modify(PlayLayer) {
         f->whiteFlashOverlay->setZOrder(1000);
         f->whiteFlashOverlay->setScale(3.0f);
         f->whiteFlashOverlay->setOpacity(0);
+        f->whiteFlashOverlay->setID("white-flash-overlay"_spr);
         f->whiteFlashOverlay->setPosition({winSize.width / 2, winSize.height / 2});
 
         this->addChild(f->whiteFlashOverlay);
@@ -211,7 +212,7 @@ class $modify(PlayLayer) {
     }
 };
 
-class $modify(EndLevelLayer) {
+class $modify(UnleashedEndLayer, EndLevelLayer) {
     struct Fields {
         CCNodeRGBA* rankingScreenNode = CCNodeRGBA::create();
         // -----------------------
@@ -251,11 +252,25 @@ class $modify(EndLevelLayer) {
         // OTHER STUFF
         // -----------------------
         CCMenu* menu = CCMenu::create();
+        CCMenu* swapMenu = CCMenu::create();
         float extraDelay = 0.9f;
         float happenFaster = 0.1f;
         int totalScore = 0;
         bool isHidden = false;
+        bool showingVanilla = false;
     };
+
+    void swapEndScreens(CCObject*) {
+        auto fields = m_fields.self();
+
+        auto vanillaEndLayer = this->getChildByID("main-layer");
+
+        fields->showingVanilla = !fields->showingVanilla;
+
+        vanillaEndLayer->setVisible(fields->showingVanilla);
+        fields->rankingScreenNode->setVisible(!fields->showingVanilla);
+        fields->menu->setVisible(!fields->showingVanilla);
+    }
 
     void customSetup() {
         EndLevelLayer::customSetup();
@@ -284,6 +299,7 @@ class $modify(EndLevelLayer) {
         f->menu->setContentSize({550.f, 40.f});
         f->menu->setScale(0.65f);
         f->menu->setZOrder(10);
+        f->menu->setID("keybinds-menu"_spr);
         this->addChild(f->menu);
 
         // sprites and buttons
@@ -315,6 +331,11 @@ class $modify(EndLevelLayer) {
             menu_selector(EndLevelLayer::onRestartCheckpoint)
         );
 
+        replayBtn->setID("replay-button"_spr);
+        exitBtn->setID("exit-button"_spr);
+        editBtn->setID("edit-button"_spr);
+        lastCheckpointBtn->setID("last-checkpoint-button"_spr);
+
         f->menu->addChild(replayBtn);
         f->menu->addChild(exitBtn);
 
@@ -327,6 +348,41 @@ class $modify(EndLevelLayer) {
 
         f->menu->updateLayout();
         f->menu->setOpacity(0);
+
+        // --------------------------------------------------------
+        // SWAP MENU SETUP
+        // --------------------------------------------------------
+
+        // swap menu
+        f->swapMenu = CCMenu::create();
+        f->swapMenu->setLayout(
+            RowLayout::create()
+                ->setGap(27.f)
+                ->setAxisAlignment(AxisAlignment::End)
+                ->setAxisReverse(true)
+                ->setCrossAxisOverflow(false)
+        );
+        f->swapMenu->setPosition({260.f, 35.f});
+        f->swapMenu->setContentSize({32.f, 32.f});
+        f->swapMenu->setScale(0.8f);
+        f->swapMenu->setZOrder(10);
+        this->addChild(f->swapMenu);
+
+        auto swapHint = CCSprite::createWithSpriteFrameName("endScreenSwap.png"_spr);
+        swapHint->setOpacity(125);
+        auto swapBtn = CCMenuItemSpriteExtra::create(
+            swapHint,
+            this,
+            menu_selector(UnleashedEndLayer::swapEndScreens)
+        );
+
+        auto contentSizeOfTheThing = f->swapMenu->getContentSize();
+        swapBtn->setPosition({contentSizeOfTheThing.width / 2, contentSizeOfTheThing.height / 2});
+
+        f->swapMenu->addChild(swapBtn);
+        f->swapMenu->setOpacity(0);
+        f->swapMenu->setID("swap-endscreens-menu"_spr);
+        f->swapMenu->setPosition({520.f, 303.f});
 
         // --------------------------------------------------------
         // RANKING SPRITE SETUP
@@ -562,6 +618,7 @@ class $modify(EndLevelLayer) {
         f->rankingScreenNode->addChild(f->afterimageRankingSprite);
         f->rankingScreenNode->setCascadeOpacityEnabled(true);
         f->rankingScreenNode->setZOrder(100);
+        f->rankingScreenNode->setID("results-screen"_spr);
         this->addChild(f->rankingScreenNode);
 
     }
@@ -788,6 +845,13 @@ class $modify(EndLevelLayer) {
             nullptr
         );
 
+        auto showSwapMenu = CCSequence::create(
+            CCDelayTime::create(0.0f + f->extraDelay),
+            CCFadeIn::create(0.5f),
+            nullptr
+        );
+
+        f->swapMenu->runAction(showSwapMenu);
 
         f->resultsBar->runAction(resultsBarMove);
         f->topArrow->runAction(decoArrow1Move);
