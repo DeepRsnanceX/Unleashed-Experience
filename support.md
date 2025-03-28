@@ -1,1 +1,5 @@
-Edit this file to change your mod's support info, or delete it if you don't need it.
+If you'd like to support me and follow my stuff more closely, follow me on:
+
+- [My Twitter!](https://x.com/DeepResonanceX)
+- [My Youtube!](https://www.youtube.com/@DeepResonanceX)
+- [My Bluesky!](https://bsky.app/profile/deepresonancex.bsky.social)
