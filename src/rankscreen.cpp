@@ -56,16 +56,68 @@ int getRandomInt(int min, int max) {
 void SonicUnleashed::rankReaction(float dt) {
     auto fmod = FMODAudioEngine::sharedEngine();
     auto playLayer = PlayLayer::get();
-
     int attempts = playLayer->m_attempts;
+
+    auto baselayer = GJBaseGameLayer::get();
+    auto thisLevel = baselayer->m_level;
+
+    int leniency = 0;
+
+    // update leniency based on lvl difficulty
+    int stars = thisLevel->m_stars;
+    int demonDiff = thisLevel->m_demonDifficulty;
+
+    if (stars < 10) {
+        switch (stars) {
+            case 6:
+                leniency = 1;
+                break;
+            case 7:
+                leniency = 2;
+                break;
+            case 8:
+                leniency = 3;
+                break;
+            case 9:
+                leniency = 4;
+                break;
+            default:
+                leniency = 0;
+                break;
+        }
+    } else {
+        switch (demonDiff) {
+            case 3: // easy demon
+                leniency = 5;
+                break;
+            case 4: // medium demon
+                leniency = 8;
+                break;
+            case 0: // hard demon
+                leniency = 10;
+                break;
+            case 5: // insane demon
+                leniency = 15;
+                break;
+            case 6: // extreme demon
+                leniency = 30;
+                break;
+            default:
+                leniency = 5;
+                break;
+        }
+    }
 
     int randomBest = getRandomInt(1, 6);
     int randomGood = getRandomInt(1, 5);
     int randomBad = getRandomInt(1, 5);
 
-    if (attempts <= 3) {
+    bool bestReactions = attempts <= 3 + leniency;
+    bool goodReactions = attempts <= 10 + leniency;
+
+    if (bestReactions) {
         fmod->playEffect(fmt::format("complete_best_{}.ogg"_spr, randomBest));
-    } else if (attempts > 3 && attempts <= 10) {
+    } else if (goodReactions) {
         fmod->playEffect(fmt::format("complete_good_{}.ogg"_spr, randomGood));
     } else {
         fmod->playEffect(fmt::format("complete_bad_{}.ogg"_spr, randomBad));
@@ -118,7 +170,7 @@ void SonicUnleashed::rankPlacement(float dt) {
                 leniency = 15;
                 break;
             case 6: // extreme demon
-                leniency = 20;
+                leniency = 30;
                 break;
             default:
                 leniency = 5;
@@ -1010,8 +1062,55 @@ class $modify(UnleashedEndLayer, EndLevelLayer) {
 
         f->menu->runAction(showKeybinds);
 
+        // update leniency based on lvl difficulty
+        int stars = thisLevel->m_stars;
+        int demonDiff = thisLevel->m_demonDifficulty;
         int attempts = m_playLayer->m_attempts;
-        if (attempts > 16) {
+        int leniency = 0;
+
+        if (stars < 10) {
+            switch (stars) {
+                case 6:
+                    leniency = 1;
+                    break;
+                case 7:
+                    leniency = 2;
+                    break;
+                case 8:
+                    leniency = 3;
+                    break;
+                case 9:
+                    leniency = 4;
+                    break;
+                default:
+                    leniency = 0;
+                    break;
+            }
+        } else {
+            switch (demonDiff) {
+                case 3: // easy demon
+                    leniency = 5;
+                    break;
+                case 4: // medium demon
+                    leniency = 8;
+                    break;
+                case 0: // hard demon
+                    leniency = 10;
+                    break;
+                case 5: // insane demon
+                    leniency = 15;
+                    break;
+                case 6: // extreme demon
+                    leniency = 30;
+                    break;
+                default:
+                    leniency = 5;
+                    break;
+            }
+        }
+
+        bool youSuckBro = attempts > 16 + leniency;
+        if (youSuckBro) {
             auto shitRankLmao = CCSequence::create(
                 CCDelayTime::create(3.45f + f->extraDelay),
                 CCEaseBounceOut::create(CCRotateBy::create(1.0f, 35.0f)),
