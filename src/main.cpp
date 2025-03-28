@@ -20,9 +20,7 @@ int genRandomInt(int min, int max) {
     return distr(gen);
 }
 void SonicUnleashed::cooldownLifeUp(float dt) {
-    bool canPlayAnim = true;
-
-    geode::log::debug("cooldownLifeUp called, canPlayAnim: {}", canPlayAnim);
+    canPlayAnim = true;
 }
 // ------------------------------------
 // FETCH SETTINGS AND STUFF
