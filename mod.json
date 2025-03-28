@@ -150,6 +150,9 @@
 			"default": true
 		}
 	},
+	"links": {
+		"source": "https://github.com/DeepRsnanceX/Unleashed-Experience"
+	},
 	"id": "saritahhh.unleashed_experience",
 	"name": "Unleashed Experience",
 	"version": "v1.0.0",

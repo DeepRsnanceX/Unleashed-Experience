@@ -1,4 +1,4 @@
-![Unleashed Experience Logo](saritahhh.unleashed_experience/modHeader.png?scale=1)
+![Unleashed Experience Logo](saritahhh.unleashed_experience/modHeader.png?scale=1.1)
 
 # Overview
 In light of Sonic Unleashed (the best Sonic game to ever bless our existence) receiving a native port to PC in the form of a Recompilation, this mod was born. 
