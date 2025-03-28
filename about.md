@@ -53,4 +53,4 @@ Attempts <= BaseRequirement + Leniency
 With this, if you're, for example, playing an Extreme Demon, you can get an S Rank if your completion is done in less than 30 attempts, instead of having to do 1 attempt for it.
 
 ## Disclaimer(s)
-This mod is meant to be experienced mostly on Classic Levels, as the features from Unleashed it brings are from Daytime Sonic. While most (if not all, hopefully) stuff WILL work in Platformer, this isn't the target mode at the time of the initial release. An update is planned to add Nighttime Stage aspects to platformer levels soon!
+This mod is meant to be experienced mostly on Classic Levels, as the features from Unleashed it brings are from Daytime Sonic. While most (if not all) stuff WILL work in Platformer, this isn't the target mode at the time of the initial release. An update is planned to add Nighttime Stage aspects to platformer levels soon!
