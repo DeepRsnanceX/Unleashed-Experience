@@ -76,13 +76,62 @@ void SonicUnleashed::rankPlacement(float dt) {
     auto fmod = FMODAudioEngine::sharedEngine();
     auto playLayer = PlayLayer::get();
     int attempts = playLayer->m_attempts;
+    auto baselayer = GJBaseGameLayer::get();
+    auto thisLevel = baselayer->m_level;
 
-    bool rankS = attempts == 1;
-    bool rankA = attempts == 2 || attempts == 3;
-    bool rankB = attempts >= 4 && attempts <= 6;
-    bool rankC = attempts >= 7 && attempts <= 10;
-    bool rankD = attempts >= 11 && attempts <= 15;
-    bool rankE = attempts > 16;
+    int leniency = 0;
+
+    // update leniency based on lvl difficulty
+    int stars = thisLevel->m_stars;
+    int demonDiff = thisLevel->m_demonDifficulty;
+
+    if (stars < 10) {
+        switch (stars) {
+            case 6:
+                leniency = 1;
+                break;
+            case 7:
+                leniency = 2;
+                break;
+            case 8:
+                leniency = 3;
+                break;
+            case 9:
+                leniency = 4;
+                break;
+            default:
+                leniency = 0;
+                break;
+        }
+    } else {
+        switch (demonDiff) {
+            case 3: // easy demon
+                leniency = 5;
+                break;
+            case 4: // medium demon
+                leniency = 8;
+                break;
+            case 0: // hard demon
+                leniency = 10;
+                break;
+            case 5: // insane demon
+                leniency = 15;
+                break;
+            case 6: // extreme demon
+                leniency = 20;
+                break;
+            default:
+                leniency = 5;
+                break;
+        }
+    }
+
+    bool rankS = attempts <= 1 + leniency;
+    bool rankA = attempts <= 3 + leniency;
+    bool rankB = attempts <= 6 + leniency;
+    bool rankC = attempts <= 10 + leniency;
+    bool rankD = attempts <= 15 + leniency;
+    bool rankE = attempts > 16 + leniency;
 
     if (rankS) {
         fmod->playEffect("rankC.ogg"_spr);
@@ -389,7 +438,77 @@ class $modify(UnleashedEndLayer, EndLevelLayer) {
         // --------------------------------------------------------
 
         int attempts = m_playLayer->m_attempts;
+        int leniency = 0;
 
+        // update leniency based on lvl difficulty
+        int stars = thisLevel->m_stars;
+        int demonDiff = thisLevel->m_demonDifficulty;
+
+        geode::log::debug("stars: {}", stars);
+        geode::log::debug("demonDiff: {}", demonDiff);
+
+        if (stars < 10) {
+            switch (stars) {
+                case 0:
+                    leniency = 0;
+                    break;
+                case 1:
+                    leniency = 0;
+                    break;
+                case 2:
+                    leniency = 0;
+                    break;
+                case 3:
+                    leniency = 0;
+                    break;
+                case 4:
+                    leniency = 0;
+                    break;
+                case 5:
+                    leniency = 0;
+                    break;
+                case 6:
+                    leniency = 1;
+                    break;
+                case 7:
+                    leniency = 2;
+                    break;
+                case 8:
+                    leniency = 3;
+                    break;
+                case 9:
+                    leniency = 4;
+                    break;
+                default:
+                    leniency = 0;
+                    geode::log::warn("unexpected stars value! stars don't seem to be within the vanilla range... (Stars: {})", stars);
+                    break;
+            }
+        } else {
+            switch (demonDiff) {
+                case 3: // easy demon
+                    leniency = 5;
+                    break;
+                case 4: // medium demon
+                    leniency = 8;
+                    break;
+                case 0: // hard demon
+                    leniency = 10;
+                    break;
+                case 5: // insane demon
+                    leniency = 15;
+                    break;
+                case 6: // extreme demon
+                    leniency = 30;
+                    break;
+                default:
+                    leniency = 5;
+                    geode::log::warn("unexpected demon difficulty value! (Demon Difficulty: {})", demonDiff);
+                    break;
+            }
+        }
+
+        // ranking sprite stuff
         f->rankingSprite->setOpacity(0);
         f->rankingSprite->setZOrder(10);
         f->rankingSprite->setPosition({188, 83});
@@ -402,12 +521,14 @@ class $modify(UnleashedEndLayer, EndLevelLayer) {
         f->afterimageRankingSprite->setID("rank-sprite-afterimage"_spr);
         f->afterimageRankingSprite->setScale(15.0f);
 
-        bool rankS = attempts == 1;
-        bool rankA = attempts == 2 || attempts == 3;
-        bool rankB = attempts >= 4 && attempts <= 6;
-        bool rankC = attempts >= 7 && attempts <= 10;
-        bool rankD = attempts >= 11 && attempts <= 15;
-        bool rankE = attempts > 16;
+        // requirements for Ranks
+
+        bool rankS = attempts <= 1 + leniency;
+        bool rankA = attempts <= 3 + leniency;
+        bool rankB = attempts <= 6 + leniency;
+        bool rankC = attempts <= 10 + leniency;
+        bool rankD = attempts <= 15 + leniency;
+        bool rankE = attempts > 16 + leniency;
 
         if (rankS) {
             f->rankingSprite->setDisplayFrame(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName("rank_s.png"_spr));
