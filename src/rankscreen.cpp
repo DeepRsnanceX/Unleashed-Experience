@@ -380,6 +380,7 @@ class $modify(UnleashedEndLayer, EndLevelLayer) {
         auto fmod = FMODAudioEngine::sharedEngine();
         auto baselayer = GJBaseGameLayer::get();
         auto thisLevel = baselayer->m_level;
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
 
         if (thisLevel->m_isEditable && disableRankInCreated) return;
 
@@ -463,7 +464,6 @@ class $modify(UnleashedEndLayer, EndLevelLayer) {
                 ->setAxisReverse(true)
                 ->setCrossAxisOverflow(false)
         );
-        f->swapMenu->setPosition({260.f, 35.f});
         f->swapMenu->setContentSize({32.f, 32.f});
         f->swapMenu->setScale(0.8f);
         f->swapMenu->setZOrder(10);
@@ -483,7 +483,7 @@ class $modify(UnleashedEndLayer, EndLevelLayer) {
         f->swapMenu->addChild(swapBtn);
         f->swapMenu->setOpacity(0);
         f->swapMenu->setID("swap-endscreens-menu"_spr);
-        f->swapMenu->setPosition({520.f, 303.f});
+        f->swapMenu->setPosition({winSize.width - 49.f, 303.f});
 
         // --------------------------------------------------------
         // RANKING SPRITE SETUP
@@ -495,9 +495,6 @@ class $modify(UnleashedEndLayer, EndLevelLayer) {
         // update leniency based on lvl difficulty
         int stars = thisLevel->m_stars;
         int demonDiff = thisLevel->m_demonDifficulty;
-
-        geode::log::debug("stars: {}", stars);
-        geode::log::debug("demonDiff: {}", demonDiff);
 
         if (stars < 10) {
             switch (stars) {

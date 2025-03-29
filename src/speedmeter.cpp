@@ -60,6 +60,11 @@ class $modify(PlayLayer) {
     bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
         if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
 
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
+
+        float meterNodeStartX = winSize.width - 269.0f;
+        float meterNodeEndX = winSize.width - 569.0f;
+
         auto blinkAnim = CCSequence::create(
             CCFadeTo::create(0.1f, 30),
             CCFadeTo::create(0.1f, 90),
@@ -106,7 +111,7 @@ class $modify(PlayLayer) {
         auto meterNode = CCNode::create();
         meterNode->setID("unleashed-speedmeter"_spr);
         meterNode->setZOrder(100);
-        meterNode->setPosition({300.0f, 0.f});
+        meterNode->setPosition({meterNodeStartX, 0.f});
 
         if (!meterUnder || !meterSpd || !meterCounter0 || !meterCounter1 || !meterCounter2 || !meterCounter3) {
             geode::log::error("Failed to create one or more speedmeter sprites");
@@ -204,6 +209,9 @@ class $modify(PlayLayer) {
 
         auto baseLayer = GJBaseGameLayer::get();
         if (baseLayer->m_isPlatformer) return;
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
+
+        float meterNodeEndX = winSize.width - 569.0f;
 
         int currentProgress = this->getCurrentPercentInt();
         bool validPercent = currentProgress == 20 || currentProgress == 50 || currentProgress == 80;
@@ -239,14 +247,13 @@ class $modify(PlayLayer) {
 
             // slide in anim for everything
             auto meterInAnim1 = CCSequence::create(
-                CCMoveBy::create(0.15f, {-300.0f, 0.f}),
-                nullptr
+            CCMoveTo::create(0.15f, {meterNodeEndX, 0.f}), // Slide to dynamic end position
+            nullptr
             );
 
-            // slide off anims for everything
             auto meterOffAnim1 = CCSequence::create(
                 CCDelayTime::create(fields->meterOffDelay),
-                CCMoveBy::create(0.15f, {300.0f, 0.f}),
+                CCMoveTo::create(0.15f, {winSize.width - 269.0f, 0.f}), // Slide back to dynamic start position
                 nullptr
             );
 
