@@ -4,8 +4,8 @@
 
 class SonicUnleashed {
 public:
-    // This function will be scheduled and called after a delay.
-    // The parameter is required by scheduleOnce.
+    // speedmeter sfx
+    void meterCount(float dt);
     void timerCheck(float dt);
     void timerCheck2(float dt);
     void timerCheck3(float dt);

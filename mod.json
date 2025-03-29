@@ -87,6 +87,14 @@
 			"description": "Use the Unleashed jet-like SFX alongside the boost SFX (only applies for Max Speed).",
 			"default": false
 		},
+		"jetsfx-type": {
+			"type": "string",
+			"name": "Jet SFX Type",
+			"description": "Select the type of jet SFX to play when using the boost.",
+			"default": "original",
+			"enable-if": "boostjet-sfx",
+			"one-of": ["original", "shortened"]
+		},
 		"speedmeter-sfx": {
 			"type": "bool",
 			"name": "Speed Meter SFX",

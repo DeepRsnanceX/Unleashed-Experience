@@ -35,6 +35,7 @@ auto doBoostVoiceDash = Mod::get()->getSettingValue<bool>("boostvoice-dash");
 auto doBoostVoiceSpeed = Mod::get()->getSettingValue<bool>("boostvoice-speed");
 auto doBoostSFXSpeed = Mod::get()->getSettingValue<bool>("boostfx-speed");
 auto doBoostJetSFX = Mod::get()->getSettingValue<bool>("boostjet-sfx");
+auto boostJetType = Mod::get()->getSettingValue<std::string>("jetsfx-type");
 auto doGoalRingSFX = Mod::get()->getSettingValue<bool>("goalring-sfx");
 auto doStageClear = Mod::get()->getSettingValue<bool>("stage-clear");
 
@@ -65,6 +66,9 @@ $on_mod(Loaded) {
     });
     listenForSettingChanges("boostjet-sfx", [](bool value) {
         doBoostJetSFX = value;
+    });
+    listenForSettingChanges("boostjet-type", [](std::string value) {
+        boostJetType = value;
     });
     listenForSettingChanges("goalring-sfx", [](bool value) {
         doGoalRingSFX = value;
@@ -180,6 +184,8 @@ class $modify(PlayerObject){
             int randomBoost = genRandomInt(1, 7);
             auto sfxToPlayBoost = fmt::format("boost_{}.ogg"_spr, randomBoost);
 
+            std::string boostJetSoundToUse = fmt::format("boostJet_{}.ogg"_spr, boostJetType);
+
             int doPlaySound = genRandomInt(1, 10);
 
             if (p0 >= 1.5f) {
@@ -187,7 +193,7 @@ class $modify(PlayerObject){
                     fmod->playEffect("boost_fullsfx.ogg"_spr);
                 }
                 if (doBoostJetSFX) {
-                    fmod->playEffect("boostJet.ogg"_spr);
+                    fmod->playEffect(boostJetSoundToUse);
                 }
                 if (doPlaySound >= 3 && doBoostVoiceSpeed) {
                     fmod->playEffect(sfxToPlayBoost);

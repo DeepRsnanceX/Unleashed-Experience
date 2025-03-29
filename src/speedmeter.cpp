@@ -19,6 +19,10 @@ $on_mod(Loaded) {
 
 float playerSpeed = 0.f;
 
+void SonicUnleashed::meterCount(float dt) {
+    auto fmod = FMODAudioEngine::sharedEngine();
+    fmod->playEffect("speedmeter_1.ogg"_spr);
+}
 void SonicUnleashed::timerCheck(float dt){
     auto fmod = FMODAudioEngine::sharedEngine();
     fmod->playEffect("speedmeter_check.ogg"_spr);
@@ -247,13 +251,13 @@ class $modify(PlayLayer) {
 
             // slide in anim for everything
             auto meterInAnim1 = CCSequence::create(
-            CCMoveTo::create(0.15f, {meterNodeEndX, 0.f}), // Slide to dynamic end position
-            nullptr
+                CCMoveTo::create(0.15f, {meterNodeEndX, 0.f}),
+                nullptr
             );
 
             auto meterOffAnim1 = CCSequence::create(
                 CCDelayTime::create(fields->meterOffDelay),
-                CCMoveTo::create(0.15f, {winSize.width - 269.0f, 0.f}), // Slide back to dynamic start position
+                CCMoveTo::create(0.15f, {winSize.width - 269.0f, 0.f}),
                 nullptr
             );
 
@@ -303,12 +307,11 @@ class $modify(PlayLayer) {
             if (validPercent) {
                 if (fields->progressLogged.find(currentProgress) == fields->progressLogged.end() || !fields->progressLogged[currentProgress]) {
 
-                    fmod->playEffect("speedmeter_1.ogg"_spr);
-
                     // run slide in anim
                     meterMainNode->runAction(meterInAnim1);
 
-                    // make actions per speed value
+                    // play counting SFX
+                    this->scheduleOnce(schedule_selector(SonicUnleashed::meterCount), 0.35f);
 
                     // FIRST COUNTER (Group 1)
                     auto scaleGlowAnim1 = CCSequence::create(
