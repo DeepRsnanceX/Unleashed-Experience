@@ -1131,7 +1131,7 @@ class $modify(UnleashedEndLayer, EndLevelLayer) {
         this->scheduleOnce(schedule_selector(SonicUnleashed::rankPlacement), 2.94f + f->extraDelay);
         this->scheduleOnce(schedule_selector(SonicUnleashed::totalScoreSound), 1.4f + f->extraDelay);
 
-        this->scheduleOnce(schedule_selector(SonicUnleashed::allSlides), 0.59f + f->extraDelay);
+        this->scheduleOnce(schedule_selector(SonicUnleashed::allSlides), 0.61f + f->extraDelay);
         //this->scheduleOnce(schedule_selector(SonicUnleashed::slide2), 0.77f + f->extraDelay);
         //this->scheduleOnce(schedule_selector(SonicUnleashed::slide3), 0.92f + f->extraDelay);
 
