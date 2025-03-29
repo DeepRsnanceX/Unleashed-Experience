@@ -1,4 +1,4 @@
-<img src="resources/modHeader.png" width="1280" alt="Sonic Unleashed Logo" />
+<img src="resources/modHeader.png" width="1280" alt="Unleashed Experience: Mod Header" />
 
 # Overview
 In light of Sonic Unleashed (the best Sonic game to ever bless our existence) receiving a native port to PC in the form of a Recompilation, this mod was born. 
@@ -52,6 +52,14 @@ The formula for calculating Max Attempts per Rank is:
 ***Attempts <= BaseRequirement + Leniency***
 
 With this, if you're, for example, playing an Extreme Demon, you can get an S Rank if your completion is done in less than 30 attempts, instead of having to do 1 attempt for it.
+
+# Previews
+
+<img src="previews/preview-1.png" width="1280" alt="HUD preview 1"/>
+
+<img src="previews/preview-2.png" width="1280" alt="HUD preview 2"/>
+
+<img src="previews/preview-3.png" width="1280" alt="Results Screen preview"/>
 
 ## Disclaimer(s)
 *This mod is meant to be experienced mostly on Classic Levels, as the features from Unleashed it brings are from Daytime Sonic. While most (if not all) stuff WILL work in Platformer, this isn't the target mode at the time of the initial release. An update is planned to add Nighttime Stage aspects to platformer levels soon!*
