@@ -203,6 +203,11 @@ void SonicUnleashed::rankPlacement(float dt) {
     }
 }
 
+void SonicUnleashed::allSlides(float dt) {
+    auto fmod = FMODAudioEngine::sharedEngine();
+    fmod->playEffect("allBarSlides.ogg"_spr);
+}
+
 void SonicUnleashed::slide1(float dt) {
     auto fmod = FMODAudioEngine::sharedEngine();
     fmod->playEffect("barSlide.ogg"_spr);
@@ -1126,9 +1131,9 @@ class $modify(UnleashedEndLayer, EndLevelLayer) {
         this->scheduleOnce(schedule_selector(SonicUnleashed::rankPlacement), 2.94f + f->extraDelay);
         this->scheduleOnce(schedule_selector(SonicUnleashed::totalScoreSound), 1.4f + f->extraDelay);
 
-        this->scheduleOnce(schedule_selector(SonicUnleashed::slide1), 0.59f + f->extraDelay);
-        this->scheduleOnce(schedule_selector(SonicUnleashed::slide2), 0.77f + f->extraDelay);
-        this->scheduleOnce(schedule_selector(SonicUnleashed::slide3), 0.92f + f->extraDelay);
+        this->scheduleOnce(schedule_selector(SonicUnleashed::allSlides), 0.59f + f->extraDelay);
+        //this->scheduleOnce(schedule_selector(SonicUnleashed::slide2), 0.77f + f->extraDelay);
+        //this->scheduleOnce(schedule_selector(SonicUnleashed::slide3), 0.92f + f->extraDelay);
 
         if (stageClearDo) {
             this->scheduleOnce(schedule_selector(SonicUnleashed::stageClear), f->extraDelay / 2);
