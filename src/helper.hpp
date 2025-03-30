@@ -6,10 +6,10 @@ class SonicUnleashed {
 public:
     // speedmeter sfx
     void meterCount(float dt);
-    void timerCheck(float dt);
-    void timerCheck2(float dt);
-    void timerCheck3(float dt);
-    void timerCheck4(float dt);
+    void meterCheck1(float dt);
+    void meterCheck2(float dt);
+    void meterCheck3(float dt);
+    void meterCheck4(float dt);
     void timerEnd(float dt);
     // sfx for the ranking screen
     void allSlides(float dt);

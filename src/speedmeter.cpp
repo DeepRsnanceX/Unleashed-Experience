@@ -23,21 +23,22 @@ void SonicUnleashed::meterCount(float dt) {
     auto fmod = FMODAudioEngine::sharedEngine();
     fmod->playEffect("speedmeter_1.ogg"_spr);
 }
-void SonicUnleashed::timerCheck(float dt){
+
+void SonicUnleashed::meterCheck1(float dt) {
     auto fmod = FMODAudioEngine::sharedEngine();
-    fmod->playEffect("speedmeter_check.ogg"_spr);
+    fmod->playEffect("meterCheck1.ogg"_spr);
 }
-void SonicUnleashed::timerCheck2(float dt){
+void SonicUnleashed::meterCheck2(float dt) {
     auto fmod = FMODAudioEngine::sharedEngine();
-    fmod->playEffect("speedmeter_check.ogg"_spr);
+    fmod->playEffect("meterCheck2.ogg"_spr);
 }
-void SonicUnleashed::timerCheck3(float dt){
+void SonicUnleashed::meterCheck3(float dt) {
     auto fmod = FMODAudioEngine::sharedEngine();
-    fmod->playEffect("speedmeter_check.ogg"_spr);
+    fmod->playEffect("meterCheck3.ogg"_spr);
 }
-void SonicUnleashed::timerCheck4(float dt){
+void SonicUnleashed::meterCheck4(float dt) {
     auto fmod = FMODAudioEngine::sharedEngine();
-    fmod->playEffect("speedmeter_check.ogg"_spr);
+    fmod->playEffect("meterCheck4.ogg"_spr);
 }
 
 void SonicUnleashed::timerEnd(float dt){
@@ -398,7 +399,7 @@ class $modify(PlayLayer) {
                         meterCounterGlow3->runAction(fadeOutGlow1);
                         speedMeterCounter3->runAction(showMeter1);
                         if (playMeterSFX) {
-                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::meterCheck1), 1.38f);
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 1.53f);
                         }
 
@@ -419,8 +420,7 @@ class $modify(PlayLayer) {
                         speedMeterCounter2->runAction(showMeter2);
 
                         if (playMeterSFX) {
-                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
-                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::meterCheck2), 1.38f);
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 1.83f);
                         }
 
@@ -445,9 +445,7 @@ class $modify(PlayLayer) {
                         speedMeterCounter1->runAction(showMeter3);
 
                         if (playMeterSFX) {
-                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
-                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
-                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck3), 1.98f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::meterCheck3), 1.38f);
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 2.13f);
                         }
 
@@ -476,10 +474,7 @@ class $modify(PlayLayer) {
                         speedMeterCounter0->runAction(showMeter4);
 
                         if (playMeterSFX) {
-                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck), 1.38f);
-                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck2), 1.68f);
-                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck3), 1.98f);
-                            this->scheduleOnce(schedule_selector(SonicUnleashed::timerCheck4), 2.28f);
+                            this->scheduleOnce(schedule_selector(SonicUnleashed::meterCheck4), 1.38f);
                             this->scheduleOnce(schedule_selector(SonicUnleashed::timerEnd), 2.43f);
                         }
                     }
