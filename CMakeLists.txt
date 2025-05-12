@@ -10,6 +10,7 @@ add_library(${PROJECT_NAME} SHARED
     src/main.cpp
     src/speedmeter.cpp
     src/rankscreen.cpp
+    src/minifeatures.cpp
     # Add any extra C++ source files here
 )
 

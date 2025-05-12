@@ -261,7 +261,7 @@ class $modify(PlayLayer) {
 
         auto fmod = FMODAudioEngine::sharedEngine();
         auto fields = m_fields.self();
-        fmod->playEffect("herewe.ogg"_spr);
+        //fmod->playEffect("herewe.ogg"_spr);
 
         auto winSize = CCDirector::sharedDirector()->getWinSize();
         auto goBackSprite = CCSprite::createWithSpriteFrameName("go_backsprite.png"_spr);
@@ -517,6 +517,13 @@ class $modify(PlayLayer) {
             fields->energyVVFast->setVisible(playerSpeedMain >= 1.6f);
         }
 
+    }
+
+    void setupHasCompleted() {
+        PlayLayer::setupHasCompleted();
+
+        auto fmod = FMODAudioEngine::sharedEngine();
+        fmod->playEffect("herewe.ogg"_spr);
     }
 
     void startGame() {

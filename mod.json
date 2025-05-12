@@ -156,6 +156,25 @@
 			"description": "Plays the Sonic Unleashed results screen music when viewing the results screen.",
 			"enable-if": "stage-clear",
 			"default": true
+		},
+		"extras-title":{
+			"type": "title",
+			"name": "Extras",
+			"description": "Settings for the extras in the mod."
+		},
+		"enable-homingatk": {
+			"type": "bool",
+			"name": "Enable Homing Attack",
+			"description": "Enables the homing attack feature in the mod. \n\n This will allow you to use the homing attack on enemies and objects, similar to how it works in Sonic Unleashed.",
+			"default": true
+		},
+		"reticle-scale": {
+			"type": "float",
+			"name": "Reticle Scale",
+			"description": "Sets the scale of the reticle when using the homing attack.",
+			"default": 2.2,
+			"min": 1,
+			"max": 5
 		}
 	},
 	"links": {
