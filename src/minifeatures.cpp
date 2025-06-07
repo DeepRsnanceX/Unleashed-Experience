@@ -80,12 +80,14 @@ class $modify(UnleashedBaseLayer, GJBaseGameLayer) {
                     triggeredObjects.insert(obj); // Mark the object as triggered
 
                     auto orbContentSize = obj->getContentSize();
-                    int parentZOrder = obj->getParent()->getZOrder() + 1;
                     auto color = ccc3(0, 255, 0);
 
                     // fix?
                     auto objParent = obj->getParent();
-                    objParent->setZOrder(parentZOrder + 20);
+                    if (objParent) {
+                        int parentZOrder = obj->getParent()->getZOrder() + 1;
+                        objParent->setZOrder(parentZOrder + 20);
+                    }
 
                     // node that holds the sprites
                     auto node = CCNodeRGBA::create();
